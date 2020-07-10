@@ -1,0 +1,4 @@
+pytesseract~=0.3.3
+Pillow~=7.1.1
+pdf2image~=1.13.1
+Send2Trash~=1.5.0
