@@ -9,7 +9,6 @@ import configparser
 from PIL import Image
 import pytesseract
 from pdf2image import convert_from_path
-from send2trash import send2trash
 from app_scripts.pdf_image_viewer import PdfImageViewer
 from app_scripts.crop_box_selector import PdfCropSelector
 
@@ -315,12 +314,8 @@ class SorterApp:
     def output_clean(self):
         """Deletes the folder holding the files that are produced by this program"""
         try:
-            if self.config.getboolean('SETTINGS', 'send_to_trash', fallback=True):
-                send2trash(self.output_dir)
-                self.term_print(f'{self.output_dir} has been sent to the trash')
-            else:
-                shutil.rmtree(self.output_dir)
-                self.term_print(f'{self.output_dir} has been deleted')
+            shutil.rmtree(self.output_dir)
+            self.term_print(f'{self.output_dir} has been deleted')
         except Exception:
             self.term_print(f'Error in cleaning {self.output_dir}')
 
