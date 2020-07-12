@@ -15,34 +15,28 @@ class PdfCropSelector:
         self.image_dict = dict()
         self.options_dict = dict()
         self.size_divisor = size_divisor
+        self.start_x = 0
+        self.start_y = 0
+        self.end_x = 0
+        self.end_y = 0
+        try:
+            for file in os.listdir(self.image_dir):
+                if file.endswith(".jpg") | file.endswith(".png"):
+                    index_num = int(file.split('_')[-1].split('.')[0])
+                    self.image_dict[index_num] = dict()
+                    input_image = Image.open(os.path.join(self.image_dir, file))
+                    input_image = input_image.resize((math.floor(input_image.size[0] / self.size_divisor),
+                                                      math.floor(input_image.size[1] / self.size_divisor)))
+                    input_image = input_image.crop((0, 0, input_image.size[0],
+                                                    math.floor(input_image.size[1] / self.size_divisor)))
+                    self.image_dict[index_num]['image'] = (ImageTk.PhotoImage(input_image))
+                    del index_num
+        except FileNotFoundError:
+            self.window.destroy()
 
-        for file in os.listdir(self.image_dir):
-            if file.endswith(".jpg") | file.endswith(".png"):
-                index_num = int(file.split('_')[-1].split('.')[0])
-                self.image_dict[index_num] = dict()
-                input_image = Image.open(os.path.join(self.image_dir, file))
-                # input_image = input_image.resize((math.floor(input_image.size[0]/3),
-                #                                   math.floor(input_image.size[1]/3)))
-                # input_image = input_image.crop((0, 0, input_image.size[0],
-                #                                 math.floor(input_image.size[1]/3)))
-                input_image = input_image.resize((math.floor(input_image.size[0] / self.size_divisor),
-                                                  math.floor(input_image.size[1] / self.size_divisor)))
-                input_image = input_image.crop((0, 0, input_image.size[0],
-                                                math.floor(input_image.size[1] / self.size_divisor)))
-                self.image_dict[index_num]['image'] = (ImageTk.PhotoImage(input_image))
-                # print(os.path.join(image_dir, file))
-                del index_num
-
-        # self.image_canvas = tk.Canvas(self.window, cursor='cross', height=500, width=500)
-        # self.image_canvas.create_image(image=self.image_dict[1]['image'])
-        # print(self.image_dict[1])
-        # self.image_label = tk.Label(self.window, image=self.image_dict[1]['image'])
-        # self.image_label.grid(row=0, column=0, columnspan=3)
         self.create_canvas(index=1)
         self.status_label = tk.Label(self.window, text="Image 1 of {}".format(len(self.image_dict)), bd=1,
                                      relief="sunken", anchor="w")
-
-        # self.image_canvas.grid(row=0, column=0, columnspan=3)
 
         self.back_btn = tk.Button(self.window, text="<<", command=self.back, state="disabled")
         self.quit_btn = tk.Button(self.window, text="Save Box Coordinates", command=lambda: self.deactivate())
@@ -100,15 +94,15 @@ class PdfCropSelector:
         self.window.mainloop()
 
     def deactivate(self):
-        try:
-            self.start_x = math.floor(self.start_x * self.size_divisor)
-            self.start_y = math.floor(self.start_y * self.size_divisor)
-            self.end_x = math.floor(self.end_x * self.size_divisor)
-            self.end_y = math.floor(self.end_y * self.size_divisor)
-        except Exception:
-            pass
-        self.window.quit()
+        # try:
+        self.start_x = math.floor(self.start_x * self.size_divisor)
+        self.start_y = math.floor(self.start_y * self.size_divisor)
+        self.end_x = math.floor(self.end_x * self.size_divisor)
+        self.end_y = math.floor(self.end_y * self.size_divisor)
+        # except Exception:
+        #     pass
         self.window.destroy()
+        self.window.quit()
 
     def forward(self, image_number):
 
