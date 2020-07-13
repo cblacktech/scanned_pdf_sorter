@@ -166,7 +166,9 @@ class SorterApp:
 
     def select_input_file(self):
         """Opens a file selection tkinter window for the user to select a pdf file"""
-        self.input_file = filedialog.askopenfile(title='Select Input PDF File', mode='r',
+        self.input_file = filedialog.askopenfile(initialdir=self.config.get('SETTINGS', 'file_initial_search_dir',
+                                                                            fallback=''),
+                                                 title='Select Input PDF File', mode='r',
                                                  filetypes=[('PDF file', '*.pdf')])
         self.term_print("Selected File: {}".format(self.input_file.name))
 
