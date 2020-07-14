@@ -55,8 +55,6 @@ class SorterApp:
 
         self.root.withdraw()
 
-        self.dark_color = '#31363b'
-
         self.input_file = None
         self.output_dir = None
         self.output_dict = {}
@@ -80,20 +78,18 @@ class SorterApp:
         self.menuBar.add_command(label="Clear", command=self.clear_term)
 
         # building right frame
-        self.right_frame = tk.LabelFrame(root, bg=self.dark_color)
-        self.terminal_output = scrolledtext.ScrolledText(self.right_frame, width=48, undo=True, bg=self.dark_color)
+        self.right_frame = tk.LabelFrame(root)
+        self.terminal_output = scrolledtext.ScrolledText(self.right_frame, width=48, undo=True)
         self.terminal_output.configure(state='disabled')
 
         # building left frame
-        self.left_frame = tk.LabelFrame(root, bg=self.dark_color)
-        self.input_label = tk.Label(self.left_frame, text='Input File', bg=self.dark_color)
-        self.left_spacer = tk.Label(self.left_frame, padx=8, bg=self.dark_color)
-        self.input_file_btn = tk.Button(self.left_frame, text='INPUT FILE', bg=self.dark_color,
-                                        command=self.select_input_file)
+        self.left_frame = tk.LabelFrame(root)
+        self.input_label = tk.Label(self.left_frame, text='Input File')
+        self.left_spacer = tk.Label(self.left_frame, padx=8)
+        self.input_file_btn = tk.Button(self.left_frame, text='INPUT FILE', command=self.select_input_file)
         if self.config.getboolean('SETTINGS', 'tmpdir_select'):
-            self.output_dir_label = tk.Label(self.left_frame, text='Temp Out Dir', bg=self.dark_color)
-            self.output_dir_btn = tk.Button(self.left_frame, text="TMP DIR", bg=self.dark_color,
-                                            command=self.select_output_dir)
+            self.output_dir_label = tk.Label(self.left_frame, text='Temp Out Dir')
+            self.output_dir_btn = tk.Button(self.left_frame, text="TMP DIR", command=self.select_output_dir)
             self.output_dir_label.grid(row=1, column=0, sticky='w')
             self.output_dir_btn.grid(row=1, column=2, sticky='ew')
         else:
