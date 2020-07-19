@@ -21,7 +21,7 @@ class SorterApp:
     by the OCR scan.
 
     This program needs the following packages installed within a python environment for proper functionality:
-        -Pillow, pytesseract, pdf2image, send2trash
+        -Pillow, pytesseract, pdf2image
         -See requirements.txt for the latest versions of the packages that have been tested with this program
 
     The python packages 'pytesseract' and 'pdf2image' require the installation of the programs Tesseract-OCR and Poppler
@@ -37,19 +37,17 @@ class SorterApp:
 
         if sys.platform.startswith('win'):
             pytesseract.pytesseract.tesseract_cmd = self.config.get('SETTINGS', 'tesseract_cmd',
-                                                                    fallback=r'Tesseract-OCR/tesseract.exe')
-            self.poppler_path = self.config.get('SETTINGS', 'poppler_path', fallback=r'poppler/bin')
+                                                                    fallback='tesseract')
+            self.poppler_path = self.config.get('SETTINGS', 'poppler_path', fallback=None)
         elif sys.platform.startswith('linux'):
             self.poppler_path = None
         else:
             sys.exit()
 
-        # print(os.getcwd())
         self.tab_size = 8
         self.line_string = '-' * 40
         self.root = root
         self.root.title("PDF SORTER")
-        # self.root.resizable(height = 0, width = 0)
         self.root.option_add('*tearOff', False)
         self.root.minsize(width=600, height=300)
 
@@ -301,7 +299,6 @@ class SorterApp:
         """Creates the folder structure to hold the files that are produced by this program"""
         try:
             os.mkdir(self.output_dir)
-            # os.mkdir(output_dir + '/split')
             os.mkdir(self.output_dir + '/images')
             os.mkdir(self.output_dir + '/crops')
             os.mkdir(self.output_dir + '/text')
@@ -326,15 +323,12 @@ class SorterApp:
         pdf_file = convert_from_path(input_file.name, dpi=self.config.getint('SETTINGS', 'dpi', fallback=200),
                                      poppler_path=self.poppler_path)
         self.term_print('pdf found')
-        # self.term_print(self.line_string)
 
         for num, page in enumerate(pdf_file):
             output_filename = f"{self.output_dir}/images/page_{num + 1}." \
                               f"{self.config.get('SETTINGS', 'image_type', fallback='png')}"
             page.save(output_filename)
             self.term_print(f"Created: {output_filename.split('/')[-1]}")
-
-        # self.term_print(self.line_string)
 
     def crop_image(self, input_file):
         """Crops the given image to the crop box that was selected"""
