@@ -22,7 +22,7 @@ class PdfCropSelector:
         try:
             for file in os.listdir(self.image_dir):
                 if file.endswith(".jpg") | file.endswith(".png"):
-                    index_num = int(file.split('_')[-1].split('.')[0])
+                    index_num = int(file.split('-')[-1].split('.')[0])
                     self.image_dict[index_num] = dict()
                     input_image = Image.open(os.path.join(self.image_dir, file))
                     input_image = input_image.resize((math.floor(input_image.size[0] / self.size_divisor),
