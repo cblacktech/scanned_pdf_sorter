@@ -1,0 +1,9 @@
+.idea
+__pycache__
+venv
+icon.png
+data
+pdf_sorter_out
+config.ini
+dist
+scanned_pdf_sorter.egg-info
