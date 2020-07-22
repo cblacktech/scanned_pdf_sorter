@@ -10,8 +10,9 @@ import configparser
 from PIL import Image
 import pytesseract
 from pdf2image import convert_from_path
-from pdf_image_viewer import PdfImageViewer
-from crop_box_selector import PdfCropSelector
+from scanned_pdf_sorter.pdf_image_viewer import PdfImageViewer
+from scanned_pdf_sorter.crop_box_selector import PdfCropSelector
+from scanned_pdf_sorter.pdf_image_config import default_config_create
 
 
 class SorterApp:
@@ -23,7 +24,6 @@ class SorterApp:
 
     This program needs the following packages installed within a python environment for proper functionality:
         -Pillow, pytesseract, pdf2image
-        -See requirements.txt for the latest versions of the packages that have been tested with this program
 
     The python packages 'pytesseract' and 'pdf2image' require the installation of the programs Tesseract-OCR and Poppler
     to function properly.
@@ -33,7 +33,10 @@ class SorterApp:
 
     def __init__(self, root, config_file='config.ini'):
         self.config = configparser.ConfigParser()
-        self.load_config(config_file=config_file)
+        self.config_file = config_file
+        # if the config file does not exist, a new one with default values will be created
+        default_config_create(self.config_file)
+        self.load_config()
 
         if sys.platform.startswith('win'):
             pytesseract.pytesseract.tesseract_cmd = self.config.get('SETTINGS', 'tesseract_cmd',
@@ -85,7 +88,7 @@ class SorterApp:
         self.input_label = tk.Label(self.left_frame, text='Input File')
         self.left_spacer = tk.Label(self.left_frame, padx=8)
         self.input_file_btn = tk.Button(self.left_frame, text='INPUT FILE', command=self.select_input_file)
-        if self.config.getboolean('SETTINGS', 'tmpdir_select'):
+        if self.config.getboolean('SETTINGS', 'tmp_dir_select'):
             self.output_dir_label = tk.Label(self.left_frame, text='Temp Out Dir')
             self.output_dir_btn = tk.Button(self.left_frame, text="TMP DIR", command=self.select_output_dir)
             self.output_dir_label.grid(row=1, column=0, sticky='w')
@@ -113,24 +116,23 @@ class SorterApp:
         self.load_box_config()
         self.root.deiconify()
 
-    def load_config(self, config_file='config.ini'):
-        self.config.read(config_file)
+    def load_config(self):
+        self.config.read(self.config_file)
 
     def write_config(self):
-        with open('config.ini', 'w') as config_file:
+        with open(f"{self.config_file}", 'w') as config_file:
             self.config.write(config_file)
 
     def load_box_config(self):
         if self.config.has_section('CROP_BOX'):
+            self.load_config()
+            self.term_print(f"Loading crop box coordinates from {self.config_file}")
             self.crop_box['start']['x'] = self.config.getint('CROP_BOX', 'start_x')
             self.crop_box['start']['y'] = self.config.getint('CROP_BOX', 'start_y')
             self.crop_box['end']['x'] = self.config.getint('CROP_BOX', 'end_x')
             self.crop_box['end']['y'] = self.config.getint('CROP_BOX', 'end_y')
-            self.write_config()
-            self.load_config()
-            self.term_print('Loading crop box coordinates from config.ini')
         else:
-            self.term_print('Unable to load crop box coordinates from config.ini')
+            self.term_print(f"Unable to load crop box coordinates {self.config_file}")
 
     def term_print(self, text=''):
         """prints the given text to gui text box as well as the terminal"""
@@ -231,7 +233,11 @@ class SorterApp:
         """Opens a tkinter window and allows the user to select which area all of the images should be cropped to"""
         self.term_print('Starting Crop Box Selector')
         crop_selector = PdfCropSelector((self.output_dir + '/images'),
-                                        size_divisor=self.config.getint('SETTINGS', 'crop_select_divisor', fallback=3))
+                                        size_divisor=self.config.getint('SETTINGS', 'crop_select_divisor', fallback=3),
+                                        box_coords=[self.config.getint('CROP_BOX', 'start_x'),
+                                                    self.config.getint('CROP_BOX', 'start_y'),
+                                                    self.config.getint('CROP_BOX', 'end_x'),
+                                                    self.config.getint('CROP_BOX', 'end_y')])
         crop_selector.activate()
 
         try:
@@ -288,7 +294,7 @@ class SorterApp:
             crop_list.sort(key=lambda x: x.split('-')[-1].split('.')[0])
             for index, image_file in enumerate(image_list):
                 image_filename = f"{self.output_dir}/images/{image_file}"
-                crop_filename = f"{self.output_dir}/crops/{crop_list[index-1]}"
+                crop_filename = f"{self.output_dir}/crops/{crop_list[index - 1]}"
                 extracted_text = self.image_extract_text(crop_filename)
                 temp_set = []
                 if extracted_text in output_dict:
@@ -340,14 +346,13 @@ class SorterApp:
         """Splits the pdf file into pages and saves the contents as images"""
         self.create_output_dir()
         self.term_print(input_file.name)
-        self.term_print(os.path.basename(input_file.name))
-        
-        self.term_print('pdf found')
-        self.term_print(f"Extracting images from the pages of {input_file.name}")
+        self.term_print(f"file {os.path.basename(input_file.name)} found")
+
+        self.term_print(f"Extracting images from the pages of {os.path.basename(input_file.name)}...")
         pdf_file_images = convert_from_path(input_file.name, dpi=self.config.getint('SETTINGS', 'dpi', fallback=200),
                                             poppler_path=self.poppler_path, paths_only=True, fmt="png", thread_count=4,
                                             output_folder=f"{self.output_dir}/images")
-        self.term_print(f"Created {len(pdf_file_images)} images from pdf file")
+        self.term_print(f"Extracted {len(pdf_file_images)} images from {os.path.basename(input_file.name)}")
 
         # for num, page in enumerate(pdf_file):
         #     output_filename = f"{self.output_dir}/images/page_{num + 1}." \
