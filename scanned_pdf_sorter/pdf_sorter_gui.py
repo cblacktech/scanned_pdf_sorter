@@ -163,8 +163,10 @@ class SorterApp:
                                                      'Are you sure that you want to quit this application?',
                                                      icon='warning')
             if quit_message == 'yes':
+                self.root.withdraw()
                 self.root.quit()
         else:
+            self.root.withdraw()
             self.root.quit()
 
     def select_input_file(self):
