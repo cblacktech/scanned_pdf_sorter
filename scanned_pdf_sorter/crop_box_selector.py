@@ -6,7 +6,7 @@ from PIL import ImageTk, Image
 
 
 class PdfCropSelector:
-    def __init__(self, image_dir, size_divisor=1):
+    def __init__(self, image_dir, size_divisor=1, box_coords=None):
         self.window = tk.Toplevel()
         self.window.title("Bounding Box Selector")
         self.window.resizable(True, True)
@@ -22,7 +22,7 @@ class PdfCropSelector:
         try:
             for file in os.listdir(self.image_dir):
                 if file.endswith(".jpg") | file.endswith(".png"):
-                    index_num = int(file.split('_')[-1].split('.')[0])
+                    index_num = int(file.split('-')[-1].split('.')[0])
                     self.image_dict[index_num] = dict()
                     input_image = Image.open(os.path.join(self.image_dir, file))
                     input_image = input_image.resize((math.floor(input_image.size[0] / self.size_divisor),
@@ -53,7 +53,15 @@ class PdfCropSelector:
         self.image_canvas.bind("<ButtonPress-1>", self.on_button_press)
         self.image_canvas.bind("<B1-Motion>", self.on_move_press)
         self.image_canvas.bind("<ButtonRelease-1>", self.on_button_release)
-        self.rect = None
+
+        if box_coords is None:
+            self.rect = None
+        else:
+            self.rect = self.image_canvas.create_rectangle(box_coords[0]/self.size_divisor,
+                                                           box_coords[1]/self.size_divisor,
+                                                           box_coords[2]/self.size_divisor,
+                                                           box_coords[3]/self.size_divisor,
+                                                           outline='red')
 
     def create_canvas(self, index):
         try:
@@ -124,7 +132,8 @@ class PdfCropSelector:
                 self.image_canvas.create_rectangle(self.start_x, self.start_y, self.end_x, self.end_y, outline='red')
             except Exception:
                 pass
-            self.status_label = tk.Label(self.window, text="Image {} of {}".format(image_number, len(self.image_dict)), bd=1, relief="sunken", anchor="w")
+            self.status_label = tk.Label(self.window, text="Image {} of {}".format(image_number, len(self.image_dict)),
+                                         bd=1, relief="sunken", anchor="w")
 
             if image_number == len(self.image_dict):
                 self.forward_btn = tk.Button(self.window, text=">>", state="disabled")

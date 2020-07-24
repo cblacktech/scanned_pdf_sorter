@@ -19,7 +19,7 @@ class PdfImageViewer:
             if self.only_images is False:
                 for file in os.listdir(self.image_dir + '/images'):
                     if file.endswith(".jpg") | file.endswith(".png"):
-                        index_num = int(file.split('_')[-1].split('.')[0])
+                        index_num = int(file.split('-')[-1].split('.')[0])
                         self.data_dict[index_num] = {}
                         input_image = Image.open(os.path.join(self.image_dir + '/images', file))
                         # input_image = input_image.resize(
@@ -42,7 +42,7 @@ class PdfImageViewer:
             else:
                 for file in os.listdir(self.image_dir):
                     if file.endswith(".jpg") | file.endswith(".png"):
-                        index_num = int(file.split('_')[-1].split('.')[0])
+                        index_num = int(file.split('-')[-1].split('.')[0])
                         self.data_dict[index_num] = {}
                         input_image = Image.open(os.path.join(self.image_dir, file))
                         # input_image = input_image.resize(
