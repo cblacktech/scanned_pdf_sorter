@@ -111,6 +111,4 @@ the path to the binaries of those programs
 
 ## Authors
 
-* **Caleb Black** - *Initial work* - [cblacktech](https://gitlab.com/cblacktech)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **Caleb Black** - [cblacktech](https://gitlab.com/cblacktech)
