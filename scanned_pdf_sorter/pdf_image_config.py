@@ -17,6 +17,7 @@ def default_config_create(file='config.ini'):
         config.set('SETTINGS', 'dpi', '200')
         config.set('SETTINGS', 'image_type', 'png')
         config.set('SETTINGS', 'file_initial_search_dir', "''")
+        config.set('SETTINGS', 'pytesseract', 'no')
         config.add_section('CROP_BOX')
         config.set('CROP_BOX', 'start_x', '0')
         config.set('CROP_BOX', 'start_y', '0')
