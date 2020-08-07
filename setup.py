@@ -19,7 +19,6 @@ setup(
     python_requires='~=3.0',
     install_requires=[
         'Pillow',
-        'pytesseract',
         'pdf2image',
         'easyocr'
     ],

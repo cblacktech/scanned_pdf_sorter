@@ -8,7 +8,6 @@ from tkinter import scrolledtext
 from tkinter import messagebox
 import configparser
 from PIL import Image
-import pytesseract
 import easyocr
 from pdf2image import convert_from_path
 from scanned_pdf_sorter.pdf_image_viewer import PdfImageViewer
@@ -24,7 +23,7 @@ class SorterApp:
     by the OCR scan.
 
     This program needs the following packages installed within a python environment for proper functionality:
-        -Pillow, pytesseract, pdf2image, easyocr
+        -Pillow, pdf2image, easyocr
 
     Warning: Currently the stacktrace for any errors that occur will only be visible via the terminal
     """
@@ -37,7 +36,6 @@ class SorterApp:
         self.load_config()
 
         if sys.platform.startswith('win'):
-            pytesseract.pytesseract.tesseract_cmd = self.config.get('SETTINGS', 'tesseract_cmd', fallback='tesseract')
             self.poppler_path = self.config.get('SETTINGS', 'poppler_path', fallback='poppler/bin')
         elif sys.platform.startswith('linux'):
             self.poppler_path = None
@@ -380,13 +378,8 @@ class SorterApp:
         """Runs an OCR scan to extract number from the given image and saves the extracted text"""
         img_name = os.path.splitext(os.path.basename(input_file))[0]
 
-        if self.config.getboolean('SETTINGS', 'pytesseract', fallback=False):
-            img = Image.open(input_file)
-            self.term_print('image {}.png found'.format(img_name))
-            text = pytesseract.image_to_string(img, lang='eng', config='digits')
-        else:
-            result = self.reader.readtext(input_file)
-            text = result[0][1]
+        result = self.reader.readtext(input_file)
+        text = result[0][1]
 
         text_file = open(f"{self.output_dir}/text/{img_name}.txt", 'w')
         text_file.write(text)

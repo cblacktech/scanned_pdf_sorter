@@ -7,34 +7,26 @@ The purpose of this project is to sort and group pages of a scanned pdf file by 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
-#### Programs/Libraries
 
-The following programs are needed for the scripts to run
-
-* [Tesseract-OCR](https://github.com/tesseract-ocr/tessdoc/blob/master/Downloads.md "https://github.com/tesseract-ocr") *(Optional: the easyocr python package is used by default for ocr)*
-* [Poppler](https://poppler.freedesktop.org "https://poppler.freedesktop.org")
+* [Poppler](https://poppler.freedesktop.org "https://poppler.freedesktop.org") is required for the reading and writing of pdf files
 
 #### Pip Packages
 * Pillow
-* pytesseract
 * pdf2image
 * easyocr
 
 #### Linux
 
-[Tesseract](https://tesseract-ocr.github.io/tessdoc/Home.html "https://tesseract-ocr.github.io") and
-[Poppler](https://poppler.freedesktop.org "https://poppler.freedesktop.org")
-are included in most Linux Distributions.
+* [Poppler](https://poppler.freedesktop.org "https://poppler.freedesktop.org")
+is included in most Linux Distributions.
 
 #### Windows
-
-*(**WARNING**: Windows installation instructions are still a work in progress)*
-
-* Tesseract: [Conda-Forge Download](https://anaconda.org/conda-forge/tesseract/files)
 
 * Poppler: [7z Archive Download](https://blog.alivate.com.au/poppler-windows/) *(Download the lasted archive)*
 
 ### Installing
+
+#### Install & Run Python Scripts
 
 ```
 * Download and extract project zip file
@@ -53,6 +45,21 @@ ex: pip install Pillow pdf2image ...
 * To run the program run this command via the terminal:
 
 python scanned_pdf_sorter/pdf_sorter_gui.py
+```
+
+#### Install via pip
+```
+* Download and extract project zip file
+
+* Navigate to project directory
+
+* Run these commands via the terminal:
+
+python -m venv venv
+
+source ./venv/bin/activate
+
+python setup.py install
 ```
 
 #### Windows:
@@ -113,10 +120,10 @@ produced by the program
 * The **CROP_BOX** stores the top-left coordinates and the bottom-right coordinates
 of the crop_box for the images
 
-* The **poppler_path** and the **tesseract_cmd** are for Windows users to specify
-the path to the binaries of those programs/libraries
+* The **poppler_path** is for Windows users to specify
+the path to the binaries for poppler
 
-* **Currently all of the other options are for testing and development purposes** 
+* **Currently all of the other options are for testing and development purposes *(it is not recommend for these values to be changed)*** 
 
 
 ## Notes
