@@ -37,8 +37,8 @@ class SorterApp:
         self.load_config()
 
         if sys.platform.startswith('win'):
-            # pytesseract.pytesseract.tesseract_cmd = self.config.get('SETTINGS', 'tesseract_cmd', fallback='tesseract')
-            self.poppler_path = self.config.get('SETTINGS', 'poppler_path', fallback=None)
+            pytesseract.pytesseract.tesseract_cmd = self.config.get('SETTINGS', 'tesseract_cmd', fallback='tesseract')
+            self.poppler_path = self.config.get('SETTINGS', 'poppler_path', fallback='poppler/bin')
         elif sys.platform.startswith('linux'):
             self.poppler_path = None
         else:

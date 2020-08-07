@@ -20,7 +20,8 @@ setup(
     install_requires=[
         'Pillow',
         'pytesseract',
-        'pdf2image'
+        'pdf2image',
+        'easyocr'
     ],
     zip_safe=False,
 )

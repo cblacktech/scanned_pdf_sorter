@@ -7,11 +7,18 @@ The purpose of this project is to sort and group pages of a scanned pdf file by 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
+#### Programs/Libraries
 
 The following programs are needed for the scripts to run
 
-* [Tesseract-OCR](https://github.com/tesseract-ocr/tessdoc/blob/master/Downloads.md "https://github.com/tesseract-ocr")
+* [Tesseract-OCR](https://github.com/tesseract-ocr/tessdoc/blob/master/Downloads.md "https://github.com/tesseract-ocr") *(Optional: the easyocr python package is used by default for ocr)*
 * [Poppler](https://poppler.freedesktop.org "https://poppler.freedesktop.org")
+
+#### Pip Packages
+* Pillow
+* pytesseract
+* pdf2image
+* easyocr
 
 #### Linux
 
@@ -25,13 +32,9 @@ are included in most Linux Distributions.
 
 * Tesseract: [Conda-Forge Download](https://anaconda.org/conda-forge/tesseract/files)
 
-* Poppler: [Conda-Forge Download](https://anaconda.org/conda-forge/poppler/files)
+* Poppler: [7z Archive Download](https://blog.alivate.com.au/poppler-windows/) *(Download the lasted archive)*
 
 ### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
 
 ```
 * Download and extract project zip file
@@ -44,14 +47,26 @@ python -m venv venv
 
 source ./venv/bin/activate
 
-pip install Pillow, pyinstaller, pdf2image
+* install nessesary packages via pip
+ex: pip install Pillow pdf2image ...
 
 * To run the program run this command via the terminal:
 
 python scanned_pdf_sorter/pdf_sorter_gui.py
 ```
 
+#### Windows:
+```
+* extract poppler archive to project directory
+* In the config.ini file set the poppler path to the bin directory of poppler (ex: poppler_path = r'./poppler/bin')
+```
+
 ## Building
+
+Install PyInstaller
+```
+pip install pyinstaller
+```
 
 PyInstaller: terminal command
 
@@ -99,14 +114,14 @@ produced by the program
 of the crop_box for the images
 
 * The **poppler_path** and the **tesseract_cmd** are for Windows users to specify
-the path to the binaries of those programs
+the path to the binaries of those programs/libraries
 
 * **Currently all of the other options are for testing and development purposes** 
 
 
 ## Notes
 
-* Complete Windows installation instructions and support are not available right now
+* Complete Windows installation instructions is a work in progress
 * Due to not having access to a Mac computer for testing purposes, Mac OS is not supported
 
 ## Authors
