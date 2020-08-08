@@ -8,3 +8,4 @@ config.ini
 dist
 build
 scanned_pdf_sorter.egg-info
+*.spec
