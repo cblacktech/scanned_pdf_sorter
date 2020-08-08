@@ -8,7 +8,6 @@ def default_config_create(file='config.ini'):
         config.read(file)
         config.add_section('SETTINGS')
         config.set('SETTINGS', 'poppler_path', "r'./poppler/bin'")
-        config.set('SETTINGS', 'tesseract_cmd', "r'./Tesseract-OCR/tesseract.exe'")
         config.set('SETTINGS', 'create_dict_json', 'no')
         config.set('SETTINGS', 'tmp_dir_select', 'no')
         config.set('SETTINGS', 'crop_select_divisor', '3')

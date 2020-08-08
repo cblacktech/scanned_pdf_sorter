@@ -6,4 +6,6 @@ data
 pdf_sorter_out
 config.ini
 dist
+build
 scanned_pdf_sorter.egg-info
+*.spec
