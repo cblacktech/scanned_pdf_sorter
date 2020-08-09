@@ -13,6 +13,7 @@ class PdfImageViewer:
 
         self.image_dir = image_dir
         self.data_dict = {}
+        self.edited_data_dict = {}
 
         if os.path.isdir(image_dir):
             if self.only_images is False:
@@ -36,8 +37,18 @@ class PdfImageViewer:
                         # print(txt_file.read())
                         txt_file.close()
 
-                self.text_label = tk.Label(self.window, text=self.data_dict[1]['text'])
-                self.text_label.grid(row=1, column=0, columnspan=3)
+                for num in range(1, len(self.data_dict) + 1):
+                    self.edited_data_dict[num] = {}
+                    self.edited_data_dict[num]['text'] = self.data_dict[num]['text']
+
+                # self.image_text = tk.Label(self.window, text=self.data_dict[1]['text'])
+                def num_check(char):
+                    return char.isdigit()
+                validation = self.window.register(num_check)
+                self.image_text = tk.Entry(self.window, justify='center',
+                                           validate="key", validatecommand=(validation, '%S'))
+                self.image_text.insert(0, self.edited_data_dict[1]['text'])
+                self.image_text.grid(row=1, column=0, columnspan=3)
             else:
                 for file in os.listdir(self.image_dir):
                     if file.endswith(".jpg") | file.endswith(".png"):
@@ -46,10 +57,13 @@ class PdfImageViewer:
                         input_image = Image.open(os.path.join(self.image_dir, file))
                         # input_image = input_image.resize(
                         #     (math.floor(input_image.size[0] / 3), math.floor(input_image.size[1] / 3)))
-                        input_image = input_image.resize(
-                            (math.floor(input_image.size[0] / size_divisor), math.floor(input_image.size[1] / size_divisor)))
+                        input_image = input_image.resize((math.floor(input_image.size[0] / size_divisor),
+                                                          math.floor(input_image.size[1] / size_divisor)))
                         self.data_dict[index_num]['image'] = (ImageTk.PhotoImage(input_image))
                         # print(os.path.join(image_dir, file))
+        else:
+            self.deactivate()
+            exit('No valid directory provided')
         
         self.status_label = tk.Label(self.window, text="Image 1 of {}".format(len(self.data_dict)), bd=1,
                                      relief="sunken", anchor="w")
@@ -97,10 +111,14 @@ class PdfImageViewer:
                                          relief="sunken", anchor="w")
             
             if self.only_images is False:
-                # text_label.config('text') =
-                self.text_label.grid_forget()
-                self.text_label = tk.Label(self.window, text=self.data_dict[image_number]['text'])
-                self.text_label.grid(row=1, column=0, columnspan=3)
+                # image_text.config('text') =
+                # self.image_text.grid_forget()
+                # self.image_text = tk.Label(self.window, text=self.data_dict[image_number]['text'])
+                # self.image_text = tk.Entry(self.window, justify='center')
+                # self.image_text.insert(0, self.data_dict[image_number]['text'])
+                self.image_text.delete(0, len(self.image_text.get()))
+                self.image_text.insert(0, self.edited_data_dict[image_number]['text'])
+                self.image_text.grid(row=1, column=0, columnspan=3)
 
             if image_number == len(self.data_dict):
                 self.forward_btn = tk.Button(self.window, text=">>", state="disabled")
@@ -125,14 +143,19 @@ class PdfImageViewer:
             self.status_label = tk.Label(self.window, text="Image {} of {}".format(image_number, len(self.data_dict)),
                                          bd=1, relief="sunken", anchor="w")
 
-            if self.only_images is False:
-                self.text_label.grid_forget()
-                self.text_label = tk.Label(self.window, text=self.data_dict[image_number]['text'])
-                self.text_label.grid(row=1, column=0, columnspan=3)
-
             if image_number == 1:
                 self.back_btn = tk.Button(self.window, text="<<", state="disabled")
                 self.window.bind('<Left>', lambda event: self.left_btn())
+
+            if self.only_images is False:
+                # self.image_text.grid_forget()
+                # self.image_text = tk.Label(self.window, text=self.data_dict[image_number]['text'])
+                # self.image_text = tk.Entry(self.window, justify='center')
+                # self.image_text.insert(0, self.data_dict[image_number]['text'])
+                self.edited_data_dict[image_number-1]['text'] = self.image_text.get()
+                self.image_text.delete(0, len(self.image_text.get()))
+                self.image_text.insert(0, self.edited_data_dict[image_number]['text'])
+                self.image_text.grid(row=1, column=0, columnspan=3)
 
             self.image_label.grid(row=0, column=0, columnspan=3)
             self.back_btn.grid(row=2, column=0)
@@ -141,11 +164,11 @@ class PdfImageViewer:
 
     def left_btn(self):
         # print('left button pressed')
-        print('', end='')
+        pass
 
     def right_btn(self):
         # print('right button pressed')
-        print('', end='')
+        pass
 
 
 if __name__ == '__main__':
