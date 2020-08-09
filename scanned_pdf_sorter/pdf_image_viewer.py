@@ -92,8 +92,8 @@ class PdfImageViewer:
         self.window.quit()
         self.window.destroy()
 
-    def update_dict_text(self, num):
-        print(num)
+    def update_dict_text(self, image_number):
+        self.data_dict[image_number]['text'] = self.image_text.get()
 
     def forward(self, image_number):
 
