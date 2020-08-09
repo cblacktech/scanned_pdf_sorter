@@ -153,8 +153,9 @@ Config.ini
 Notes
 =====
 
-- Complete Windows installation instructions is a work in progress
+- If you want a custom window icon, have a ``.png`` file in the same directory that you are launching your application from
 - Due to not having access to a Mac computer for testing purposes, Mac OS is not supported
+- Complete Windows installation instructions is a work in progress
 
 =======
 Authors
