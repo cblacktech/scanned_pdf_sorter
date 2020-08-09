@@ -106,9 +106,9 @@ setup.py
 
     from scanned_pdf_sorter import pdf_image_config, pdf_sorter_gui
 
-    pdf_image_config.default_config_create()
+    pdf_image_config.default_config_create(filname='config.ini')
 
-    pdf_sorter_gui.main()
+    pdf_sorter_gui.main(config_file='config.ini')
 
 
 While still in the python console you may this command to remove the config file, after the gui is closed

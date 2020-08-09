@@ -2,10 +2,10 @@ import os
 import configparser
 
 
-def default_config_create(file='config.ini'):
-    if os.path.isfile(file) is False:
+def default_config_create(filename='config.ini'):
+    if os.path.isfile(filename) is False:
         config = configparser.ConfigParser()
-        config.read(file)
+        config.read(filename)
         config.add_section('SETTINGS')
         config.set('SETTINGS', 'poppler_path', "r'./poppler/bin'")
         config.set('SETTINGS', 'create_dict_json', 'no')
@@ -22,5 +22,5 @@ def default_config_create(file='config.ini'):
         config.set('CROP_BOX', 'end_x', '100')
         config.set('CROP_BOX', 'end_y', '100')
 
-        with open(file, 'w') as f:
+        with open(filename, 'w') as f:
             config.write(f)

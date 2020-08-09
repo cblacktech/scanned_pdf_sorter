@@ -389,10 +389,10 @@ class SorterApp:
         return text
 
 
-def main():
-    app = SorterApp(tk.Tk())
+def main(config_file='config.ini'):
+    app = SorterApp(tk.Tk(), config_file)
     app.activate()
 
 
 if __name__ == '__main__':
-    main()
+    main(config_file='config.ini')
