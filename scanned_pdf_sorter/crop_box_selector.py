@@ -1,5 +1,4 @@
 import os
-import sys
 import math
 import tkinter as tk
 from PIL import ImageTk, Image
@@ -57,6 +56,10 @@ class PdfCropSelector:
         if box_coords is None:
             self.rect = None
         else:
+            self.start_x = box_coords[0]/self.size_divisor
+            self.start_y = box_coords[1]/self.size_divisor
+            self.end_x = box_coords[2]/self.size_divisor
+            self.end_y = box_coords[3]/self.size_divisor
             self.rect = self.image_canvas.create_rectangle(box_coords[0]/self.size_divisor,
                                                            box_coords[1]/self.size_divisor,
                                                            box_coords[2]/self.size_divisor,
