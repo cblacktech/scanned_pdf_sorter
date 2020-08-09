@@ -1,5 +1,4 @@
 import os
-import sys
 import math
 import tkinter as tk
 from PIL import ImageTk, Image
@@ -150,5 +149,5 @@ class PdfImageViewer:
 
 
 if __name__ == '__main__':
-    viewer = PdfImageViewer('pdf_sorter_app_tk/pdf_sorter_out')
+    viewer = PdfImageViewer(image_dir='pdf_sorter_out', size_divisor=8)
     viewer.activate()
