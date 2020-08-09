@@ -13,7 +13,6 @@ class PdfImageViewer:
 
         self.image_dir = image_dir
         self.data_dict = {}
-        self.edited_data_dict = {}
 
         if os.path.isdir(image_dir):
             if self.only_images is False:
@@ -37,17 +36,13 @@ class PdfImageViewer:
                         # print(txt_file.read())
                         txt_file.close()
 
-                for num in range(1, len(self.data_dict) + 1):
-                    self.edited_data_dict[num] = {}
-                    self.edited_data_dict[num]['text'] = self.data_dict[num]['text']
-
-                # self.image_text = tk.Label(self.window, text=self.data_dict[1]['text'])
                 def num_check(char):
                     return char.isdigit()
                 validation = self.window.register(num_check)
                 self.image_text = tk.Entry(self.window, justify='center',
                                            validate="key", validatecommand=(validation, '%S'))
-                self.image_text.insert(0, self.edited_data_dict[1]['text'])
+                                           # command=lambda: self.update_dict_text(image_number))
+                self.image_text.insert(0, self.data_dict[1]['text'])
                 self.image_text.grid(row=1, column=0, columnspan=3)
             else:
                 for file in os.listdir(self.image_dir):
@@ -75,7 +70,8 @@ class PdfImageViewer:
 
         self.back_btn = tk.Button(self.window, text="<<", command=self.back, state="disabled")
         self.quit_btn = tk.Button(self.window, text="Exit Program", command=lambda: self.deactivate())
-        self.forward_btn = tk.Button(self.window, text=">>", command=lambda: self.forward(2))
+        self.forward_btn = tk.Button(self.window, text=">>",
+                                     command=lambda: [self.update_dict_text(1), self.forward(2)])
 
         self.back_btn.grid(row=2, column=0)
         self.quit_btn.grid(row=2, column=1, pady=10)
@@ -83,7 +79,8 @@ class PdfImageViewer:
         self.status_label.grid(row=3, column=0, columnspan=3, sticky="w e")
 
         self.window.bind('<Left>', lambda event: [self.back, self.left_btn()])
-        self.window.bind('<Right>', lambda event, n=2: [self.forward(n), self.right_btn()])
+        self.window.bind('<Right>', lambda event, n=2: [self.update_dict_text(n-1),
+                                                        self.forward(n), self.right_btn()])
         self.window.bind('<Escape>', lambda event: [self.deactivate()])
 
         # self.window.mainloop()
@@ -95,21 +92,28 @@ class PdfImageViewer:
         self.window.quit()
         self.window.destroy()
 
+    def update_dict_text(self, num):
+        print(num)
+
     def forward(self, image_number):
 
         if image_number in self.data_dict:
             self.image_label.grid_forget()
             self.image_label = tk.Label(self.window, image=self.data_dict[image_number]['image'])
-            self.forward_btn = tk.Button(self.window, text=">>", command=lambda: self.forward(image_number + 1))
-            self.back_btn = tk.Button(self.window, text="<<", command=lambda: self.back(image_number - 1))
+            self.forward_btn = tk.Button(self.window, text=">>", command=lambda: [self.update_dict_text(image_number),
+                                                                                  self.forward(image_number + 1)])
+            self.back_btn = tk.Button(self.window, text="<<", command=lambda: [self.update_dict_text(image_number),
+                                                                               self.back(image_number - 1)])
 
-            self.window.bind('<Left>', lambda event, n=image_number - 1: [self.forward(n), self.left_btn()])
-            self.window.bind('<Right>', lambda event, n=image_number + 1: [self.back(n), self.right_btn()])
+            self.window.bind('<Left>', lambda event, n=image_number - 1: [self.update_dict_text(image_number),
+                                                                          self.forward(n), self.left_btn()])
+            self.window.bind('<Right>', lambda event, n=image_number + 1: [self.update_dict_text(image_number),
+                                                                           self.back(n), self.right_btn()])
 
             self.status_label = tk.Label(self.window, text="Image {} of {}".format(image_number, len(self.data_dict)),
                                          bd=1,
                                          relief="sunken", anchor="w")
-            
+
             if self.only_images is False:
                 # image_text.config('text') =
                 # self.image_text.grid_forget()
@@ -117,7 +121,7 @@ class PdfImageViewer:
                 # self.image_text = tk.Entry(self.window, justify='center')
                 # self.image_text.insert(0, self.data_dict[image_number]['text'])
                 self.image_text.delete(0, len(self.image_text.get()))
-                self.image_text.insert(0, self.edited_data_dict[image_number]['text'])
+                self.image_text.insert(0, self.data_dict[image_number]['text'])
                 self.image_text.grid(row=1, column=0, columnspan=3)
 
             if image_number == len(self.data_dict):
@@ -134,28 +138,31 @@ class PdfImageViewer:
         if image_number in self.data_dict:
             self.image_label.grid_forget()
             self.image_label = tk.Label(self.window, image=self.data_dict[image_number]['image'])
-            self.forward_btn = tk.Button(self.window, text=">>", command=lambda: self.forward(image_number + 1))
-            self.back_btn = tk.Button(self.window, text="<<", command=lambda: self.back(image_number - 1))
+            self.forward_btn = tk.Button(self.window, text=">>", command=lambda: [self.update_dict_text(image_number),
+                                                                                  self.forward(image_number + 1)])
+            self.back_btn = tk.Button(self.window, text="<<", command=lambda: [self.update_dict_text(image_number),
+                                                                               self.back(image_number - 1)])
 
-            self.window.bind('<Left>', lambda event, n=image_number - 1: [self.forward(n), self.left_btn()])
-            self.window.bind('<Right>', lambda event, n=image_number + 1: [self.back(n), self.right_btn()])
+            self.window.bind('<Left>', lambda event, n=image_number - 1: [self.update_dict_text(image_number),
+                                                                          self.forward(n), self.left_btn()])
+            self.window.bind('<Right>', lambda event, n=image_number + 1: [self.update_dict_text(image_number),
+                                                                           self.back(n), self.right_btn()])
 
             self.status_label = tk.Label(self.window, text="Image {} of {}".format(image_number, len(self.data_dict)),
                                          bd=1, relief="sunken", anchor="w")
-
-            if image_number == 1:
-                self.back_btn = tk.Button(self.window, text="<<", state="disabled")
-                self.window.bind('<Left>', lambda event: self.left_btn())
 
             if self.only_images is False:
                 # self.image_text.grid_forget()
                 # self.image_text = tk.Label(self.window, text=self.data_dict[image_number]['text'])
                 # self.image_text = tk.Entry(self.window, justify='center')
                 # self.image_text.insert(0, self.data_dict[image_number]['text'])
-                self.edited_data_dict[image_number-1]['text'] = self.image_text.get()
                 self.image_text.delete(0, len(self.image_text.get()))
-                self.image_text.insert(0, self.edited_data_dict[image_number]['text'])
+                self.image_text.insert(0, self.data_dict[image_number]['text'])
                 self.image_text.grid(row=1, column=0, columnspan=3)
+
+            if image_number == 1:
+                self.back_btn = tk.Button(self.window, text="<<", state="disabled")
+                self.window.bind('<Left>', lambda event: self.left_btn())
 
             self.image_label.grid(row=0, column=0, columnspan=3)
             self.back_btn.grid(row=2, column=0)
