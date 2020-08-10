@@ -80,6 +80,8 @@ class PdfImageViewer:
         self.forward_btn.grid(row=2, column=2)
         self.status_label.grid(row=3, column=0, columnspan=3, sticky="w e")
 
+        self.image_text.focus()
+
         self.window.bind('<Left>', lambda event: [self.back, self.left_btn()])
         self.window.bind('<Right>', lambda event, n=2: [self.update_dict_text(n - 1),
                                                         self.forward(n), self.right_btn()])
