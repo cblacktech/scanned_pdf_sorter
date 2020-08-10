@@ -60,7 +60,7 @@ class PdfImageViewer:
         else:
             self.deactivate()
             exit('No valid directory provided')
-        
+
         self.status_label = tk.Label(self.window, text="Image 1 of {}".format(len(self.data_dict)), bd=1,
                                      relief="sunken", anchor="w")
 
@@ -70,7 +70,8 @@ class PdfImageViewer:
         self.image_label.grid(row=0, column=0, columnspan=3)
 
         self.back_btn = tk.Button(self.window, text="<<", command=self.back, state="disabled")
-        self.quit_btn = tk.Button(self.window, text="Exit Program", command=lambda: self.deactivate(image_number=1))
+        self.quit_btn = tk.Button(self.window, text="Exit Program",
+                                  command=lambda: [self.update_dict_text(1), self.deactivate()])
         self.forward_btn = tk.Button(self.window, text=">>",
                                      command=lambda: [self.update_dict_text(1), self.forward(2)])
 
@@ -80,22 +81,30 @@ class PdfImageViewer:
         self.status_label.grid(row=3, column=0, columnspan=3, sticky="w e")
 
         self.window.bind('<Left>', lambda event: [self.back, self.left_btn()])
-        if self.only_images:
-            self.window.bind('<Right>', lambda event, n=2: [self.forward(n), self.right_btn()])
-        else:
-            self.window.bind('<Right>', lambda event, n=2: [self.update_dict_text(n - 1),
-                                                            self.forward(n), self.right_btn()])
-        self.window.bind('<Escape>', lambda event: [self.deactivate()])
+        self.window.bind('<Right>', lambda event, n=2: [self.update_dict_text(n - 1),
+                                                        self.forward(n), self.right_btn()])
+        self.window.bind('<Return>', lambda event, n=2: [self.update_dict_text(n - 1),
+                                                         self.forward(n), self.right_btn()])
+        self.window.bind('<Escape>', lambda event: [self.update_dict_text(1), self.deactivate()])
 
     def activate(self):
         self.window.mainloop()
 
     def deactivate(self):
+        if self.only_images is False:
+            # self.update_dict_text(self.img_num)
+            for num in range(1, len(os.listdir(os.path.join(self.image_dir, 'text')))+1):
+                with open(os.path.join(self.image_dir, 'text',
+                                       str(num).zfill(len(str(len(os.listdir(os.path.join(self.image_dir,
+                                                                                          'text'))))))+'.txt'),
+                          'w') as text_file:
+                    text_file.write(self.data_dict[num]['text'])
         self.window.quit()
         self.window.destroy()
 
-    def update_dict_text(self, image_number):
-        self.data_dict[image_number]['text'] = self.image_text.get()
+    def update_dict_text(self, image_number=0):
+        if self.only_images is False and image_number != 0:
+            self.data_dict[image_number]['text'] = self.image_text.get()
 
     def forward(self, image_number):
 
@@ -106,15 +115,19 @@ class PdfImageViewer:
                                                                                   self.forward(image_number + 1)])
             self.back_btn = tk.Button(self.window, text="<<", command=lambda: [self.update_dict_text(image_number),
                                                                                self.back(image_number - 1)])
+            self.quit_btn = tk.Button(self.window, text="Exit Program",
+                                      command=lambda: [self.update_dict_text(image_number), self.deactivate()])
 
             self.window.bind('<Left>', lambda event, n=image_number - 1: [self.update_dict_text(image_number),
                                                                           self.forward(n), self.left_btn()])
             self.window.bind('<Right>', lambda event, n=image_number + 1: [self.update_dict_text(image_number),
                                                                            self.back(n), self.right_btn()])
+            self.window.bind('<Return>', lambda event, n=image_number + 1: [self.update_dict_text(image_number),
+                                                                            self.back(n), self.right_btn()])
+            self.window.bind('<Escape>', lambda event: [self.update_dict_text(image_number), self.deactivate()])
 
             self.status_label = tk.Label(self.window, text="Image {} of {}".format(image_number, len(self.data_dict)),
-                                         bd=1,
-                                         relief="sunken", anchor="w")
+                                         bd=1, relief="sunken", anchor="w")
 
             if self.only_images is False:
                 # image_text.config('text') =
@@ -132,6 +145,7 @@ class PdfImageViewer:
 
             self.image_label.grid(row=0, column=0, columnspan=3)
             self.back_btn.grid(row=2, column=0)
+            self.quit_btn.grid(row=2, column=1, pady=10)
             self.forward_btn.grid(row=2, column=2)
             self.status_label.grid(row=3, column=0, columnspan=3, sticky="w e")
 
@@ -144,11 +158,16 @@ class PdfImageViewer:
                                                                                   self.forward(image_number + 1)])
             self.back_btn = tk.Button(self.window, text="<<", command=lambda: [self.update_dict_text(image_number),
                                                                                self.back(image_number - 1)])
+            self.quit_btn = tk.Button(self.window, text="Exit Program",
+                                      command=lambda: [self.update_dict_text(image_number), self.deactivate()])
 
             self.window.bind('<Left>', lambda event, n=image_number - 1: [self.update_dict_text(image_number),
                                                                           self.forward(n), self.left_btn()])
             self.window.bind('<Right>', lambda event, n=image_number + 1: [self.update_dict_text(image_number),
                                                                            self.back(n), self.right_btn()])
+            self.window.bind('<Return>', lambda event, n=image_number + 1: [self.update_dict_text(image_number),
+                                                                            self.back(n), self.right_btn()])
+            self.window.bind('<Escape>', lambda event: [self.update_dict_text(image_number), self.deactivate()])
 
             self.status_label = tk.Label(self.window, text="Image {} of {}".format(image_number, len(self.data_dict)),
                                          bd=1, relief="sunken", anchor="w")
@@ -168,6 +187,7 @@ class PdfImageViewer:
 
             self.image_label.grid(row=0, column=0, columnspan=3)
             self.back_btn.grid(row=2, column=0)
+            self.quit_btn.grid(row=2, column=1, pady=10)
             self.forward_btn.grid(row=2, column=2)
             self.status_label.grid(row=3, column=0, columnspan=3, sticky="w e")
 
