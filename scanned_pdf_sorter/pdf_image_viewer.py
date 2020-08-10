@@ -14,9 +14,9 @@ class PdfImageViewer:
         self.image_dir = image_dir
         self.data_dict = {}
 
-        if os.path.isdir(image_dir):
+        if os.path.isdir(self.image_dir):
             if self.only_images is False:
-                for file in os.listdir(self.image_dir + '/images'):
+                for file in os.listdir(os.path.join(self.image_dir, 'images')):
                     if file.endswith(".jpg") | file.endswith(".png"):
                         index_num = int(file.split('-')[-1].split('.')[0])
                         self.data_dict[index_num] = {}
@@ -24,11 +24,12 @@ class PdfImageViewer:
                         # input_image = input_image.resize(
                         #     (math.floor(input_image.size[0] / 3), math.floor(input_image.size[1] / 3)))
                         input_image = input_image.resize(
-                            (math.floor(input_image.size[0] / size_divisor), math.floor(input_image.size[1] / size_divisor)))
+                            (math.floor(input_image.size[0] / size_divisor),
+                             math.floor(input_image.size[1] / size_divisor)))
                         self.data_dict[index_num]['image'] = (ImageTk.PhotoImage(input_image))
                         # print(os.path.join(image_dir, file))
 
-                for file in os.listdir(self.image_dir + '/text'):
+                for file in os.listdir(os.path.join(self.image_dir, 'text')):
                     if file.endswith(".txt"):
                         index_num = int(file.split('_')[-1].split('.')[0])
                         txt_file = open(os.path.join(self.image_dir + '/text', file), 'r')
@@ -38,10 +39,10 @@ class PdfImageViewer:
 
                 def num_check(char):
                     return char.isdigit()
+
                 validation = self.window.register(num_check)
                 self.image_text = tk.Entry(self.window, justify='center',
                                            validate="key", validatecommand=(validation, '%S'))
-                                           # command=lambda: self.update_dict_text(image_number))
                 self.image_text.insert(0, self.data_dict[1]['text'])
                 self.image_text.grid(row=1, column=0, columnspan=3)
             else:
@@ -69,7 +70,7 @@ class PdfImageViewer:
         self.image_label.grid(row=0, column=0, columnspan=3)
 
         self.back_btn = tk.Button(self.window, text="<<", command=self.back, state="disabled")
-        self.quit_btn = tk.Button(self.window, text="Exit Program", command=lambda: self.deactivate())
+        self.quit_btn = tk.Button(self.window, text="Exit Program", command=lambda: self.deactivate(image_number=1))
         self.forward_btn = tk.Button(self.window, text=">>",
                                      command=lambda: [self.update_dict_text(1), self.forward(2)])
 
@@ -79,11 +80,12 @@ class PdfImageViewer:
         self.status_label.grid(row=3, column=0, columnspan=3, sticky="w e")
 
         self.window.bind('<Left>', lambda event: [self.back, self.left_btn()])
-        self.window.bind('<Right>', lambda event, n=2: [self.update_dict_text(n-1),
-                                                        self.forward(n), self.right_btn()])
+        if self.only_images:
+            self.window.bind('<Right>', lambda event, n=2: [self.forward(n), self.right_btn()])
+        else:
+            self.window.bind('<Right>', lambda event, n=2: [self.update_dict_text(n - 1),
+                                                            self.forward(n), self.right_btn()])
         self.window.bind('<Escape>', lambda event: [self.deactivate()])
-
-        # self.window.mainloop()
 
     def activate(self):
         self.window.mainloop()
