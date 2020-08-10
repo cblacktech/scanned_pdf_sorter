@@ -188,19 +188,19 @@ class SorterApp:
         self.term_print(self.line_string)
         self.load_box_config()
         if self.input_file is not None and self.input_file.name:
-            self.term_print("Check successful")
             self.term_print(f"{self.input_file.name}")
             self.term_print(f"{self.output_dir}")
             self.term_print('top left ' + str(self.crop_box['start']))
             self.term_print('bottom right ' + str(self.crop_box['end']))
+            self.term_print("Check successful")
             self.term_print(self.line_string)
             return True
         else:
-            self.term_print("Check failed")
             self.term_print("file: 'no pdf file selected'")
             self.term_print(f"dir: {self.output_dir}")
             self.term_print('top left ' + str(self.crop_box['start']))
             self.term_print('bottom right ' + str(self.crop_box['end']))
+            self.term_print("Check failed")
             self.term_print(self.line_string)
             return False
 
@@ -277,14 +277,16 @@ class SorterApp:
 
     def run_main_viewer(self):
         """Displays the extracted images from the pdf as well as the information that was extracted from the OCR scan"""
-        self.term_print(self.output_dir)
+        self.term_print("Starting main viewer")
         viewer = PdfImageViewer(self.output_dir,
                                 size_divisor=self.config.getint('SETTINGS', 'main_display_divisor', fallback=8))
         viewer.activate()
+        self.term_print("Stopping main viewer")
 
     def get_pdf_dict(self) -> dict:
         """Scans the folder structure and groups the pdf images by matching extracted information from the OCR scan"""
         self.term_print(self.output_dir)
+        self.create_output_dir()
 
         if self.run_check():
             output_dict = {}
@@ -316,10 +318,22 @@ class SorterApp:
         """Creates the folder structure to hold the files that are produced by this program"""
         try:
             os.mkdir(self.output_dir)
+            self.term_print(f"{self.output_dir} created")
+        except FileExistsError:
+            pass
+        try:
             os.mkdir(self.output_dir + '/images')
+            self.term_print(f"{self.output_dir}/images created")
+        except FileExistsError:
+            pass
+        try:
             os.mkdir(self.output_dir + '/crops')
+            self.term_print(f"{self.output_dir}/crops created")
+        except FileExistsError:
+            pass
+        try:
             os.mkdir(self.output_dir + '/text')
-            self.term_print('output directories created')
+            self.term_print(f"{self.output_dir}/text created")
         except FileExistsError:
             pass
 
