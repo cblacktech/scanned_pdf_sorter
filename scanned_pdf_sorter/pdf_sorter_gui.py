@@ -162,10 +162,11 @@ class SorterApp:
             if quit_message == 'yes':
                 self.root.withdraw()
                 self.root.quit()
+                exit()
         else:
             self.root.withdraw()
             self.root.quit()
-        exit()
+            exit()
 
     def select_input_file(self):
         """Opens a file selection tkinter window for the user to select a pdf file"""
