@@ -7,7 +7,7 @@ def default_config_create(filename='config.ini'):
         config = configparser.ConfigParser()
         config.read(filename)
         config.add_section('SETTINGS')
-        config.set('SETTINGS', 'poppler_path', "r'./poppler/bin'")
+        config.set('SETTINGS', 'poppler_path', 'poppler/bin')
         config.set('SETTINGS', 'create_dict_json', 'no')
         config.set('SETTINGS', 'tmp_dir_select', 'no')
         config.set('SETTINGS', 'crop_select_divisor', '3')
