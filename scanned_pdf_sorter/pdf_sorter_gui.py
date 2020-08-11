@@ -192,8 +192,8 @@ class SorterApp:
 
     def run_check(self):
         """Checks to see if an input file is selected and valid"""
-        self.term_print("Running Check...")
         self.term_print(self.line_string)
+        self.term_print("Running Check...")
         self.load_box_config()
         if self.input_file is not None and self.input_file.name:
             self.term_print(f"{self.input_file.name}")
@@ -227,9 +227,15 @@ class SorterApp:
         if self.run_check():
             self.term_print("Starting OCR")
             self.create_output_dir()
-            self.output_dict = self.get_pdf_dict()
+
+            crop_list = os.listdir(f"{self.output_dir}/crops")
+            crop_list.sort(key=lambda x: x.split('-')[-1].split('.')[0])
+            for index, image_file in enumerate(crop_list):
+                crop_filename = f"{self.output_dir}/crops/{crop_list[index]}"
+                self.image_extract_text(crop_filename)
 
             if self.config.getboolean('SETTINGS', 'create_dict_json', fallback=False):
+                # self.output_dict = self.get_pdf_dict()
                 with open(self.output_dir + '/dict.json', 'w') as json_file:
                     json.dump(self.output_dict, json_file, indent=4)
                 self.term_print(f"{self.output_dir}/dict.json created")
