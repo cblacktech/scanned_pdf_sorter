@@ -61,18 +61,25 @@ class SorterApp:
         # building menu
         self.menuBar = tk.Menu(self.root)
         self.root.config(menu=self.menuBar)
+
         self.runMenu = tk.Menu(self.menuBar, tearoff=False)
+        self.runMenu.add_command(label="Quick", command=self.run_quick)
+        self.runMenu.add_separator()
+        self.runMenu.add_command(label="Clean", command=lambda: self.output_clean(confirmation_box=True))
         self.runMenu.add_command(label="Splitter", command=self.run_splitter)
-        self.runMenu.add_command(label='Crop Selector', command=self.run_crop_selector)
         self.runMenu.add_command(label='Crop Images', command=self.run_cropping)
-        self.runMenu.add_command(label='Crop Viewer', command=self.run_crop_viewer)
         self.runMenu.add_command(label='OCR', command=self.run_ocr)
-        self.runMenu.add_command(label='Image+Text Viewer', command=self.run_main_viewer)
         self.runMenu.add_separator()
         self.runMenu.add_command(label="Quit", command=lambda: self.deactivate(confirmation_box=True))
+
+        self.viewMenu = tk.Menu(self.menuBar, tearoff=False)
+        self.viewMenu.add_command(label='Crop Selector', command=self.run_crop_selector)
+        self.viewMenu.add_command(label='Crop Viewer', command=self.run_crop_viewer)
+        self.viewMenu.add_command(label='Image+Text Viewer', command=self.run_main_viewer)
+
         self.menuBar.add_cascade(label="Run", menu=self.runMenu)
+        self.menuBar.add_cascade(label="Viewers", menu=self.viewMenu)
         self.menuBar.add_command(label="Check", command=self.run_check)
-        self.menuBar.add_command(label="Clean", command=lambda: self.output_clean(confirmation_box=True))
         self.menuBar.add_command(label="Clear", command=self.clear_term)
 
         # building right frame
@@ -204,6 +211,17 @@ class SorterApp:
             self.term_print("Check failed")
             self.term_print(self.line_string)
             return False
+
+    def run_quick(self):
+        """Function to run the functions for: splitter, cropper, and ocr in quick succession"""
+        if self.run_check():
+            self.term_print("Starting quick")
+            self.run_splitter()
+            self.run_cropping()
+            self.run_ocr()
+            self.term_print("Stopping quick")
+        else:
+            self.term_print("Unable to run quick")
 
     def run_ocr(self):
         if self.run_check():
