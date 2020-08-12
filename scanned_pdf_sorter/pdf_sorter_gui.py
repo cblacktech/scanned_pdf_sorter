@@ -15,6 +15,24 @@ from scanned_pdf_sorter.crop_box_selector import PdfCropSelector
 from scanned_pdf_sorter.pdf_image_config import default_config_create
 
 
+class StdoutRedirector(object):
+    def __init__(self, text_widget, tab_size=4):
+        self.text_area = text_widget
+        self.tab_size = tab_size
+
+    def write(self, string):
+        self.text_area.configure(state='normal')
+        self.text_area.insert('end', f"{string.expandtabs(self.tab_size)}")
+        print(string.expandtabs(self.tab_size), file=sys.__stdout__, end='')
+        self.text_area.see('end')
+        self.text_area.configure(state='disabled')
+
+    def flush(self):
+        self.text_area.configure(state='normal')
+        self.text_area.delete('1.0', 'end')
+        self.text_area.configure(state='disabled')
+
+
 class SorterApp:
     """Scanned PDF Sorter App
 
@@ -41,8 +59,6 @@ class SorterApp:
             self.poppler_path = None
         else:
             sys.exit()
-
-        self.reader = easyocr.Reader(['en'], gpu=False)
 
         self.tab_size = 8
         self.line_string = '-' * 40
@@ -86,6 +102,9 @@ class SorterApp:
         self.right_frame = tk.LabelFrame(root)
         self.terminal_output = scrolledtext.ScrolledText(self.right_frame, width=48, undo=True)
         self.terminal_output.configure(state='disabled')
+
+        sys.stdout = StdoutRedirector(self.terminal_output, self.tab_size)
+        self.reader = easyocr.Reader(['en'], gpu=False)
 
         # building left frame
         self.left_frame = tk.LabelFrame(root)
@@ -143,11 +162,7 @@ class SorterApp:
         if isinstance(text, str) is False:
             text = str(text)
         if text != '':
-            print('-' + text.expandtabs(self.tab_size))
-            self.terminal_output.configure(state='normal')
-            self.terminal_output.insert('end', f"{'-' + text.expandtabs(self.tab_size)}\n")
-            self.terminal_output.see('end')
-            self.terminal_output.configure(state='disabled')
+            print(f"-{text}")
         self.root.update()
 
     def clear_term(self):
