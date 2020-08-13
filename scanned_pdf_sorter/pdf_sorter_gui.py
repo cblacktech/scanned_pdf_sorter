@@ -84,21 +84,21 @@ class SorterApp:
         self.root.config(menu=self.menuBar)
 
         self.runMenu = tk.Menu(self.menuBar, tearoff=False)
-        self.runMenu.add_command(label="Quick", command=self.run_quick)
-        self.runMenu.add_separator()
+        self.runMenu.add_command(label="Quick", command=lambda: [self.load_config, self.run_quick])
         self.runMenu.add_command(label="Clean", command=lambda: self.output_clean(confirmation_box=True))
-        self.runMenu.add_command(label="Splitter", command=self.run_splitter)
-        self.runMenu.add_command(label='Crop Images', command=self.run_cropping)
-        self.runMenu.add_command(label='OCR', command=self.run_ocr)
-        self.runMenu.add_command(label='Merge', command=self.run_merge)
+        self.runMenu.add_separator()
+        self.runMenu.add_command(label="Splitter", command=lambda: [self.load_config, self.run_splitter])
+        self.runMenu.add_command(label='Crop Images', command=lambda: [self.load_config, self.run_cropping])
+        self.runMenu.add_command(label='OCR', command=lambda: [self.load_config, self.run_ocr])
+        self.runMenu.add_command(label='Merge', command=lambda: [self.load_config, self.run_merge])
         self.runMenu.add_separator()
         self.runMenu.add_command(label='JSON', command=self.save_pdf_dict)
         self.runMenu.add_separator()
         self.runMenu.add_command(label="Quit", command=lambda: self.deactivate(confirmation_box=True))
 
         self.viewMenu = tk.Menu(self.menuBar, tearoff=False)
-        self.viewMenu.add_command(label='Crop Selector', command=self.run_crop_selector)
-        self.viewMenu.add_command(label='Crop Viewer', command=self.run_crop_viewer)
+        self.viewMenu.add_command(label='Crop Selector', command=lambda: [self.load_config, self.run_crop_selector])
+        self.viewMenu.add_command(label='Crop Viewer', command=lambda: [self.load_config, self.run_crop_viewer])
         self.viewMenu.add_command(label='Image+Text Viewer', command=self.run_main_viewer)
 
         self.menuBar.add_cascade(label="Run", menu=self.runMenu)
@@ -145,6 +145,7 @@ class SorterApp:
                 self.root.iconphoto(self, tk.PhotoImage(file=f"{os.getcwd()}/{f_name}"))
                 break
         self.load_box_config()
+        print(f"-Loading crop box coordinates from {self.config_file}")
         self.root.deiconify()
 
     def load_config(self):
@@ -157,7 +158,6 @@ class SorterApp:
     def load_box_config(self):
         if self.config.has_section('CROP_BOX'):
             self.load_config()
-            print(f"-Loading crop box coordinates from {self.config_file}")
             self.crop_box['start']['x'] = self.config.getint('CROP_BOX', 'start_x')
             self.crop_box['start']['y'] = self.config.getint('CROP_BOX', 'start_y')
             self.crop_box['end']['x'] = self.config.getint('CROP_BOX', 'end_x')
@@ -237,6 +237,7 @@ class SorterApp:
             self.run_splitter()
             self.run_cropping()
             self.run_ocr()
+            self.run_merge()
             print("-Stopping quick")
         else:
             print("-Unable to run quick")
@@ -258,6 +259,16 @@ class SorterApp:
 
     def run_merge(self):
         pdf_dict = self.get_pdf_dict()
+        for num, key in enumerate(pdf_dict.keys()):
+            pdf_images = pdf_dict[key]['images']
+            img_list = []
+            for img in pdf_images:
+                img_data = Image.open(img)
+                img_data = img_data.convert('RGB')
+                img_list.append(img_data)
+            im1 = img_list.pop(0)
+            im1.save(f"{self.output_dir}/pdfs/pdf-{str(num)}.pdf", save_all=True, append_images=img_list)
+            print(f"-file pdf-{str(num)}.pdf saved")
 
     def save_pdf_dict(self):
         if os.path.isfile(os.path.join(self.output_dir, 'pdf_dict.json')):
@@ -383,6 +394,11 @@ class SorterApp:
         try:
             os.mkdir(self.output_dir + '/text')
             print(f"-{self.output_dir}/text created")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(self.output_dir + '/pdfs')
+            print(f"-{self.output_dir}/pdfs created")
         except FileExistsError:
             pass
 
