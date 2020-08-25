@@ -13,6 +13,7 @@ from pdf2image import convert_from_path
 from scanned_pdf_sorter.pdf_image_viewer import PdfImageViewer
 from scanned_pdf_sorter.crop_box_selector import PdfCropSelector
 from scanned_pdf_sorter.pdf_image_config import default_config_create
+from scanned_pdf_sorter.mssql_query import MsSqlQuery
 
 
 class StdoutRedirector:
@@ -91,7 +92,7 @@ class SorterApp:
         default_config_create(self.config_file)
         self.load_config()
 
-        # test_database = MsSqlEmail(driver=self.config.get('SQL_SERVER', 'driver'),
+        # test_database = MsSqlQuery(driver=self.config.get('SQL_SERVER', 'driver'),
         #                            server_ip=self.config.get('SQL_SERVER', 'server_ip'),
         #                            database_name=self.config.get('SQL_SERVER', 'database'),
         #                            table_name=self.config.get('SQL_SERVER', 'table'),
