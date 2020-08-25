@@ -54,12 +54,12 @@ Setup & Run via python scripts
 - Create and activate a virtual environment:
     * python -m venv venv
     * source ./venv/bin/activate
-- Install nessesary packages via pip
+- Install necessary packages via pip
     * ex: pip install Pillow pdf2image etc...
 
 - To run the program run this command via the terminal:
 
-.. code-block:: python
+.. code-block::
 
     python scanned_pdf_sorter/pdf_sorter_gui.py
 
