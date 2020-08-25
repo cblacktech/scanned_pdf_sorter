@@ -16,15 +16,17 @@ from scanned_pdf_sorter.pdf_image_config import default_config_create
 
 
 class StdoutRedirector:
-    def __init__(self, text_widget, root_widget, tab_size=4):
+    def __init__(self, text_widget, root_widget, tab_size=4, text_color=None):
         self.text_area = text_widget
         self.tab_size = tab_size
         self.root_widget = root_widget
+        self.text_color = text_color
 
     def write(self, string):
         if isinstance(string, str) is False:
             string = str(string)
         self.text_area.configure(state='normal')
+        self.text_area.configure(fg=self.text_color)
         self.text_area.insert('end', f"{string.expandtabs(self.tab_size)}")
         print(string.expandtabs(self.tab_size), file=sys.__stdout__, end='')
         self.text_area.see('end')
