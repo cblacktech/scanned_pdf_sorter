@@ -54,12 +54,6 @@ class SorterApp:
     """
 
     def __init__(self, root, config_file='config.ini'):
-        self.config = configparser.ConfigParser()
-        self.config_file = config_file
-        # if the config file does not exist, a new one with default values will be created
-        default_config_create(self.config_file)
-        self.load_config()
-
         if sys.platform.startswith('win'):
             self.poppler_path = self.config.get('SETTINGS', 'poppler_path', fallback='poppler/bin')
         elif sys.platform.startswith('linux'):
@@ -67,19 +61,45 @@ class SorterApp:
         else:
             sys.exit()
 
+        self.root = root
         self.tab_size = 8
         self.line_string = '-' * 40
-        self.root = root
         self.root.title("PDF SORTER")
         self.root.option_add('*tearOff', False)
         self.root.minsize(width=600, height=300)
-
         self.root.withdraw()
 
         self.input_file = None
         self.output_dir = None
         self.output_dict = {}
         self.crop_box = {'start': {}, 'end': {}}
+
+        # building right frame
+        self.right_frame = tk.LabelFrame(root)
+        self.terminal_output = scrolledtext.ScrolledText(self.right_frame, width=48, undo=True)
+        self.terminal_output.configure(state='disabled')
+
+        # redirecting terminal output
+        sys.stdout = StdoutRedirector(self.terminal_output, self.root, self.tab_size)
+        # sys.stderr = StdoutRedirector(self.terminal_output, self.root, self.tab_size, 'Red')
+        # sys.stderr = sys.stdout
+
+        # loading config file contents
+        self.config = configparser.ConfigParser()
+        self.config_file = config_file
+        # if the config file does not exist, a new one with default values will be created
+        default_config_create(self.config_file)
+        self.load_config()
+
+        # test_database = MsSqlEmail(driver=self.config.get('SQL_SERVER', 'driver'),
+        #                            server_ip=self.config.get('SQL_SERVER', 'server_ip'),
+        #                            database_name=self.config.get('SQL_SERVER', 'database'),
+        #                            table_name=self.config.get('SQL_SERVER', 'table'),
+        #                            id_column=self.config.get('SQL_SERVER', 'id_column'),
+        #                            email_column=self.config.get('SQL_SERVER', 'email_column'),
+        #                            sql_login=self.config.getboolean('SQL_SERVER', 'sql_login'),
+        #                            username=self.config.get('SQL_SERVER', 'username'),
+        #                            password=self.config.get('SQL_SERVER', 'password'))
 
         # building menu
         self.menuBar = tk.Menu(self.root)
@@ -108,12 +128,6 @@ class SorterApp:
         self.menuBar.add_command(label="Check", command=self.run_check)
         self.menuBar.add_command(label="Clear", command=self.clear_term)
 
-        # building right frame
-        self.right_frame = tk.LabelFrame(root)
-        self.terminal_output = scrolledtext.ScrolledText(self.right_frame, width=48, undo=True)
-        self.terminal_output.configure(state='disabled')
-
-        sys.stdout = StdoutRedirector(self.terminal_output, self.root, self.tab_size)
         self.reader = easyocr.Reader(['en'], gpu=False)
 
         # building left frame
