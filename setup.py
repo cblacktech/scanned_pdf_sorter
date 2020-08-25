@@ -7,7 +7,7 @@ with open(path.join(this_directory, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='scanned_pdf_sorter',
-    version='1.0.4',
+    version='0.4.6',
     packages=['scanned_pdf_sorter'],
     url='https://gitlab.com/cblacktech/scanned_pdf_sorter',
     license='',
@@ -23,6 +23,8 @@ setup(
         'Pillow',
         'pdf2image',
         'easyocr',
+        'torch==1.6.0',
+        'torchvision==0.7.0'
         # 'torch==1.6.0+cpu',
         # 'torchvision==0.7.0+cpu',
     ],
