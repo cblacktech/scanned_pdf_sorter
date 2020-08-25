@@ -23,6 +23,7 @@ setup(
         'Pillow',
         'pdf2image',
         'easyocr',
+        'pyodbc',
         'torch==1.6.0',
         'torchvision==0.7.0'
         # 'torch==1.6.0+cpu',
