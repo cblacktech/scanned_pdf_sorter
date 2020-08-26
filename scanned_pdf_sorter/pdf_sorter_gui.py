@@ -99,7 +99,8 @@ class SorterApp:
         self.config_file = config_file
         # if the config file does not exist, a new one with default values will be created
         default_config_create(self.config_file)
-        self.load_config()
+        self.load_box_config()
+        print(f"-Loading crop box coordinates from {self.config_file}")
 
         # test_database = MsSqlQuery(driver=self.config.get('SQL_SERVER', 'driver'),
         #                            server_ip=self.config.get('SQL_SERVER', 'server_ip'),
@@ -170,8 +171,6 @@ class SorterApp:
                 print(f"-{f_name} loaded as program icon")
                 self.root.iconphoto(self, tk.PhotoImage(file=f"{os.getcwd()}/{f_name}"))
                 break
-        self.load_box_config()
-        print(f"-Loading crop box coordinates from {self.config_file}")
         self.root.deiconify()
 
     def load_config(self):
