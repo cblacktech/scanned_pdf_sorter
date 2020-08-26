@@ -28,6 +28,7 @@ Pip Packages
 - Pillow
 - pdf2image
 - easyocr
+- torch & torchvision (Run command from the `pytorch website <https://pytorch.org/>`_)
 
 -----
 Linux
@@ -54,12 +55,17 @@ Setup & Run via python scripts
 - Create and activate a virtual environment:
     * python -m venv venv
     * source ./venv/bin/activate
-- Install nessesary packages via pip
+- Install necessary packages via pip
     * ex: pip install Pillow pdf2image etc...
+    * ex: pip install using requirements.txt
+
+    .. code-block::
+
+        pip install -r requirements.txt -f https://download.pytorch.org/whl/torch_stable.html
 
 - To run the program run this command via the terminal:
 
-.. code-block:: python
+.. code-block::
 
     python scanned_pdf_sorter/pdf_sorter_gui.py
 
@@ -74,6 +80,8 @@ Install via pip
     * source ./venv/bin/activate
 - Install package
     * python setup.py install
+-Run command:
+    * pdf_sorter_app_run
 
 -------
 Windows
@@ -95,7 +103,7 @@ setup.py
 
 .. code-block::
 
-    pip install .
+    python setup.py install
 
 
 - How to run the program after pip install
@@ -106,9 +114,9 @@ setup.py
 
     from scanned_pdf_sorter import pdf_image_config, pdf_sorter_gui
 
-    pdf_image_config.default_config_create()
+    pdf_image_config.default_config_create(filname='config.ini')
 
-    pdf_sorter_gui.main()
+    pdf_sorter_gui.main(config_file='config.ini')
 
 
 While still in the python console you may this command to remove the config file, after the gui is closed
@@ -153,8 +161,9 @@ Config.ini
 Notes
 =====
 
-- Complete Windows installation instructions is a work in progress
+- If you want a custom window icon, have a ``.png`` file in the same directory that you are launching your application from
 - Due to not having access to a Mac computer for testing purposes, Mac OS is not supported
+- Complete Windows installation instructions is a work in progress
 
 =======
 Authors

@@ -1,5 +1,4 @@
 import os
-import sys
 import math
 import tkinter as tk
 from PIL import ImageTk, Image
@@ -57,10 +56,12 @@ class PdfCropSelector:
         if box_coords is None:
             self.rect = None
         else:
-            self.rect = self.image_canvas.create_rectangle(box_coords[0]/self.size_divisor,
-                                                           box_coords[1]/self.size_divisor,
-                                                           box_coords[2]/self.size_divisor,
-                                                           box_coords[3]/self.size_divisor,
+            self.start_x = box_coords[0]/self.size_divisor
+            self.start_y = box_coords[1]/self.size_divisor
+            self.end_x = box_coords[2]/self.size_divisor
+            self.end_y = box_coords[3]/self.size_divisor
+            self.rect = self.image_canvas.create_rectangle(self.start_x, self.start_y,
+                                                           self.end_x, self.end_y,
                                                            outline='red')
 
     def create_canvas(self, index):
@@ -91,7 +92,6 @@ class PdfCropSelector:
         self.image_canvas.coords(self.rect, self.start_x, self.start_y, cursor_x, cursor_y)
 
     def on_button_release(self, event):
-        # print("[+] Mouse release")
         self.end_x = self.image_canvas.canvasx(event.x)
         self.end_y = self.image_canvas.canvasy(event.y)
         print('start: ' + str(self.start_x) + ', ' + str(self.start_y))
@@ -102,13 +102,10 @@ class PdfCropSelector:
         self.window.mainloop()
 
     def deactivate(self):
-        # try:
         self.start_x = math.floor(self.start_x * self.size_divisor)
         self.start_y = math.floor(self.start_y * self.size_divisor)
         self.end_x = math.floor(self.end_x * self.size_divisor)
         self.end_y = math.floor(self.end_y * self.size_divisor)
-        # except Exception:
-        #     pass
         self.window.destroy()
         self.window.quit()
 
@@ -139,7 +136,6 @@ class PdfCropSelector:
                 self.forward_btn = tk.Button(self.window, text=">>", state="disabled")
                 self.window.bind('<Right>', lambda event: self.right_btn)
 
-            # self.image_label.grid(row=0, column=0, columnspan=3)
             self.back_btn.grid(row=2, column=0)
             self.forward_btn.grid(row=2, column=2)
             self.status_label.grid(row=3, column=0, columnspan=3, sticky="w e")
@@ -172,17 +168,14 @@ class PdfCropSelector:
                 self.back_btn = tk.Button(self.window, text="<<", state="disabled")
                 self.window.bind('<Left>', lambda event: self.left_btn())
 
-            # self.image_label.grid(row=0, column=0, columnspan=3)
             self.back_btn.grid(row=2, column=0)
             self.forward_btn.grid(row=2, column=2)
             self.status_label.grid(row=3, column=0, columnspan=3, sticky="w e")
 
     def left_btn(self):
-        # print('left button pressed')
         print('', end='')
 
     def right_btn(self):
-        # print('right button pressed')
         print('', end='')
 
 
