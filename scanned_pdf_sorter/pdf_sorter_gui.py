@@ -166,6 +166,7 @@ class SorterApp:
         else:
             sys.exit()
 
+        self.root.protocol('WM_DELETE_WINDOW', lambda: self.deactivate(confirmation_box=True))
         self.root.deiconify()
 
     def load_config(self):
