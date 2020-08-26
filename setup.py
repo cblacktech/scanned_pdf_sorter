@@ -18,16 +18,17 @@ setup(
     long_description_content_type='text/x-rst',
     python_requires='~=3.0',
     include_package_data=True,
+    dependency_links=[
+        "https://download.pytorch.org/whl/torch_stable.html"
+    ],
     install_requires=[
         'matplotlib==3.2.2',
         'Pillow',
         'pdf2image',
         'easyocr',
         'pyodbc',
-        'torch==1.6.0',
-        'torchvision==0.7.0'
-        # 'torch==1.6.0+cpu',
-        # 'torchvision==0.7.0+cpu',
+        'torch==1.6.0+cpu',
+        'torchvision==0.7.0+cpu',
     ],
     zip_safe=False,
     entry_points={'console_scripts': [
