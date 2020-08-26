@@ -57,6 +57,11 @@ Setup & Run via python scripts
     * source ./venv/bin/activate
 - Install necessary packages via pip
     * ex: pip install Pillow pdf2image etc...
+    * ex: pip install using requirements.txt
+
+    .. code-block::
+
+        pip install -r requirements.txt -f https://download.pytorch.org/whl/torch_stable.html
 
 - To run the program run this command via the terminal:
 
