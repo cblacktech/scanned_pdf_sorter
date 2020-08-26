@@ -74,6 +74,8 @@ Install via pip
     * source ./venv/bin/activate
 - Install package
     * python setup.py install
+-Run command:
+    * pdf_sorter_app_run
 
 -------
 Windows
