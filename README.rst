@@ -97,7 +97,7 @@ setup.py
 
 .. code-block::
 
-    pip install .
+    python setup.py install
 
 
 - How to run the program after pip install
