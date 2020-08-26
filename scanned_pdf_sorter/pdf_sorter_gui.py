@@ -146,14 +146,8 @@ class SorterApp:
         self.input_label = tk.Label(self.left_frame, text='Input File')
         self.left_spacer = tk.Label(self.left_frame, padx=8)
         self.input_file_btn = tk.Button(self.left_frame, text='INPUT FILE', command=self.select_input_file)
-        if self.config.getboolean('SETTINGS', 'tmp_dir_select'):
-            self.output_dir_label = tk.Label(self.left_frame, text='Temp Out Dir')
-            self.output_dir_btn = tk.Button(self.left_frame, text="TMP DIR", command=self.select_output_dir)
-            self.output_dir_label.grid(row=1, column=0, sticky='w')
-            self.output_dir_btn.grid(row=1, column=2, sticky='ew')
-        else:
-            self.output_dir = f"{os.getcwd()}/pdf_sorter_out"
-            print(f"-Selected Directory: {self.output_dir}")
+        self.output_dir = f"{os.getcwd()}/pdf_sorter_out"
+        print(f"-Selected Directory: {self.output_dir}")
 
         # packing left frame
         self.left_frame.pack(padx=0, pady=0, side='left', fill='y')
