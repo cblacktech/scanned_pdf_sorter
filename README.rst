@@ -28,6 +28,7 @@ Pip Packages
 - Pillow
 - pdf2image
 - easyocr
+- torch & torchvision (Run command from the `pytorch website <https://pytorch.org/>`_)
 
 -----
 Linux
