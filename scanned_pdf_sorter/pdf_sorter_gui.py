@@ -3,6 +3,7 @@ import sys
 import json
 import shutil
 import tkinter as tk
+from tkinter import ttk
 from tkinter import filedialog
 from tkinter import scrolledtext
 from tkinter import messagebox
@@ -17,19 +18,23 @@ from scanned_pdf_sorter.mssql_query import MsSqlQuery
 
 
 class StdoutRedirector:
-    def __init__(self, text_widget, root_widget, tab_size=4, text_color=None):
+    def __init__(self, text_widget, root_widget, tab_size=4, text_color=None, secondary_output=sys.__stdout__):
         self.text_area = text_widget
         self.tab_size = tab_size
         self.root_widget = root_widget
         self.text_color = text_color
+        self.secondary_output = secondary_output
 
     def write(self, string):
         if isinstance(string, str) is False:
             string = str(string)
         self.text_area.configure(state='normal')
-        self.text_area.configure(fg=self.text_color)
+        try:
+            self.text_area.configure(fg=self.text_color)
+        except Exception:
+            self.text_area.configure(fg=None)
         self.text_area.insert('end', f"{string.expandtabs(self.tab_size)}")
-        print(string.expandtabs(self.tab_size), file=sys.__stdout__, end='')
+        print(string.expandtabs(self.tab_size), file=self.secondary_output, end='')
         self.text_area.see('end')
         self.text_area.configure(state='disabled')
         self.root_widget.update()
@@ -76,14 +81,18 @@ class SorterApp:
         self.crop_box = {'start': {}, 'end': {}}
 
         # building right frame
-        self.right_frame = tk.LabelFrame(root)
-        self.terminal_output = scrolledtext.ScrolledText(self.right_frame, width=48, undo=True)
+        self.right_frame = tk.LabelFrame(self.root)
+        self.tab_manager = ttk.Notebook(self.right_frame)
+        self.terminal_output = scrolledtext.ScrolledText(self.tab_manager, undo=True)
+        self.error_output = scrolledtext.ScrolledText(self.tab_manager, undo=True)
+        self.tab_manager.add(self.terminal_output, text='Main')
+        self.tab_manager.add(self.error_output, text='Error')
         self.terminal_output.configure(state='disabled')
+        self.error_output.configure(state='disabled')
 
-        # redirecting terminal output
-        sys.stdout = StdoutRedirector(self.terminal_output, self.root, self.tab_size)
-        # sys.stderr = StdoutRedirector(self.terminal_output, self.root, self.tab_size, 'Red')
-        # sys.stderr = sys.stdout
+        # redirecting terminal and error output
+        sys.stdout = StdoutRedirector(self.terminal_output, self.root, self.tab_size, None, sys.__stdout__)
+        sys.stderr = StdoutRedirector(self.error_output, self.root, self.tab_size, 'Red', sys.__stderr__)
 
         # loading config file contents
         self.config = configparser.ConfigParser()
@@ -132,7 +141,7 @@ class SorterApp:
         self.reader = easyocr.Reader(['en'], gpu=False)
 
         # building left frame
-        self.left_frame = tk.LabelFrame(root)
+        self.left_frame = tk.LabelFrame(self.root)
         self.input_label = tk.Label(self.left_frame, text='Input File')
         self.left_spacer = tk.Label(self.left_frame, padx=8)
         self.input_file_btn = tk.Button(self.left_frame, text='INPUT FILE', command=self.select_input_file)
@@ -153,7 +162,7 @@ class SorterApp:
 
         # packing right frame
         self.right_frame.pack(padx=0, pady=0, side='left', expand=True, fill='both')
-        self.terminal_output.pack(side='left', expand=True, fill='both')
+        self.tab_manager.pack(side='left', expand=True, fill='both')
 
         # finds a png file and uses it as the program icon
         for f_name in os.listdir(os.getcwd()):
