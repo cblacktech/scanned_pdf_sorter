@@ -27,7 +27,10 @@ class StdoutRedirector:
         if isinstance(string, str) is False:
             string = str(string)
         self.text_area.configure(state='normal')
-        self.text_area.configure(fg=self.text_color)
+        try:
+            self.text_area.configure(fg=self.text_color)
+        except Exception:
+            self.text_area.configure(fg=None)
         self.text_area.insert('end', f"{string.expandtabs(self.tab_size)}")
         print(string.expandtabs(self.tab_size), file=sys.__stdout__, end='')
         self.text_area.see('end')
