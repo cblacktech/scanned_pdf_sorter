@@ -60,13 +60,6 @@ class SorterApp:
     """
 
     def __init__(self, root, config_file='config.ini'):
-        if sys.platform.startswith('win'):
-            self.poppler_path = self.config.get('SETTINGS', 'poppler_path', fallback='poppler/bin')
-        elif sys.platform.startswith('linux'):
-            self.poppler_path = None
-        else:
-            sys.exit()
-
         self.root = root
         self.tab_size = 8
         self.line_string = '-' * 40
@@ -165,6 +158,14 @@ class SorterApp:
                 print(f"-{f_name} loaded as program icon")
                 self.root.iconphoto(self, tk.PhotoImage(file=f"{os.getcwd()}/{f_name}"))
                 break
+
+        if sys.platform.startswith('win'):
+            self.poppler_path = self.config.get('SETTINGS', 'poppler_path', fallback='poppler/bin')
+        elif sys.platform.startswith('linux'):
+            self.poppler_path = None
+        else:
+            sys.exit()
+
         self.root.deiconify()
 
     def load_config(self):
