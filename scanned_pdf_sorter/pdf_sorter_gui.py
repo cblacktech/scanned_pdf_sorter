@@ -17,11 +17,12 @@ from scanned_pdf_sorter.mssql_query import MsSqlQuery
 
 
 class StdoutRedirector:
-    def __init__(self, text_widget, root_widget, tab_size=4, text_color=None):
+    def __init__(self, text_widget, root_widget, tab_size=4, text_color=None, secondary_output=sys.__stdout__):
         self.text_area = text_widget
         self.tab_size = tab_size
         self.root_widget = root_widget
         self.text_color = text_color
+        self.secondary_output = secondary_output
 
     def write(self, string):
         if isinstance(string, str) is False:
@@ -32,7 +33,7 @@ class StdoutRedirector:
         except Exception:
             self.text_area.configure(fg=None)
         self.text_area.insert('end', f"{string.expandtabs(self.tab_size)}")
-        print(string.expandtabs(self.tab_size), file=sys.__stdout__, end='')
+        print(string.expandtabs(self.tab_size), file=self.secondary_output, end='')
         self.text_area.see('end')
         self.text_area.configure(state='disabled')
         self.root_widget.update()
@@ -83,10 +84,9 @@ class SorterApp:
         self.terminal_output = scrolledtext.ScrolledText(self.right_frame, width=48, undo=True)
         self.terminal_output.configure(state='disabled')
 
-        # redirecting terminal output
-        sys.stdout = StdoutRedirector(self.terminal_output, self.root, self.tab_size)
-        # sys.stderr = StdoutRedirector(self.terminal_output, self.root, self.tab_size, 'Red')
-        # sys.stderr = sys.stdout
+        # redirecting terminal and error output
+        sys.stdout = StdoutRedirector(self.terminal_output, self.root, self.tab_size, None, sys.__stdout__)
+        sys.stderr = StdoutRedirector(self.error_output, self.root, self.tab_size, 'Red', sys.__stderr__)
 
         # loading config file contents
         self.config = configparser.ConfigParser()
