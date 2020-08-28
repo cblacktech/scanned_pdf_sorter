@@ -93,6 +93,7 @@ class SorterApp:
         # if the config file does not exist, a new one with default values will be created
         default_config_create(self.config_file)
         self.load_box_config()
+        print(f"-Loading crop box coordinates from {self.config_file}")
 
         # test_database = MsSqlQuery(driver=self.config.get('SQL_SERVER', 'driver'),
         #                            server_ip=self.config.get('SQL_SERVER', 'server_ip'),
@@ -176,13 +177,12 @@ class SorterApp:
             self.config.write(config_file)
 
     def load_box_config(self):
-        self.load_config()
         if self.config.has_section('CROP_BOX'):
+            self.load_config()
             self.crop_box['start']['x'] = self.config.getint('CROP_BOX', 'start_x')
             self.crop_box['start']['y'] = self.config.getint('CROP_BOX', 'start_y')
             self.crop_box['end']['x'] = self.config.getint('CROP_BOX', 'end_x')
             self.crop_box['end']['y'] = self.config.getint('CROP_BOX', 'end_y')
-            print(f"-Loading crop box coordinates from {self.config_file}")
         else:
             print(f"-Unable to load crop box coordinates {self.config_file}")
 
