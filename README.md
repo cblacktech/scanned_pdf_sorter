@@ -24,7 +24,7 @@ file by the selected information that was extracted from each page.
 
 Project Links
 
--   https://www.gitlab.com/cblacktech/scanned_pdf_sorter
+-   [Gitlab](https://www.gitlab.com/cblacktech/scanned_pdf_sorter)
 
 -   [GitKraken Board](https://app.gitkraken.com/glo/board/Xy8D66sO6gARqmUg)
 
