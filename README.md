@@ -1,6 +1,8 @@
 scanned\_pdf\_sorter
 ====================
 
+[[_TOC_]]
+
 Introduction
 ------------
 
