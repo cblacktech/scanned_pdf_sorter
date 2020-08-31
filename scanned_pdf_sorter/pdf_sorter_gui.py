@@ -257,6 +257,7 @@ class SorterApp:
         if self.run_check():
             print("-Starting quick")
             self.run_splitter()
+            self.run_crop_selector()
             self.run_cropping()
             self.run_ocr()
             self.run_merge()
