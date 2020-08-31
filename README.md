@@ -1,6 +1,21 @@
 # scanned\_pdf\_sorter
 
-[[TOC]]
+-   [Introduction](#introduction)
+-   [Prerequisites](#prerequisites)
+    -   [Programs / Libraries](#programs-libraries)
+    -   [Pip Packages](#pip-packages)
+    -   [Linux](#linux)
+    -   [Windows](#windows)
+-   [Installation & Running](#installation-running)
+    -   [Setup & Run via python scripts](#setup-run-via-python-scripts)
+    -   [Install via pip](#install-via-pip)
+    -   [Windows](#windows-1)
+-   [Building](#building)
+    -   [setup.py](#setuppy)
+    -   [PyInstaller](#pyinstaller)
+-   [Config.ini](#configini)
+-   [Notes](#notes)
+-   [Authors](#authors)
 
 ## Introduction
 
