@@ -1,10 +1,8 @@
-scanned\_pdf\_sorter
-====================
+# scanned\_pdf\_sorter
 
-[[_TOC_]]
+[[TOC]]
 
-Introduction
-------------
+## Introduction
 
 The purpose of this project is to sort and group pages of a scanned pdf
 file by the selected information that was extracted from each page.
@@ -15,8 +13,7 @@ Project Links
 
 -   [GitKraken Board](https://app.gitkraken.com/glo/board/Xy8D66sO6gARqmUg)
 
-Prerequisites
--------------
+## Prerequisites
 
 ### Programs / Libraries
 
@@ -39,8 +36,7 @@ Prerequisites
 -   Poppler: [7z Archive Download](https://blog.alivate.com.au/poppler-windows/)
     *(Download the lasted archive)*
 
-Installation & Running
-----------------------
+## Installation & Running
 
 ### Setup & Run via python scripts
 
@@ -94,8 +90,7 @@ Installation & Running
 -   In the config.ini file set the poppler path to the bin directory of
     poppler (ex: poppler\_path = r'./poppler/bin')
 
-Building
---------
+## Building
 
 ### setup.py
 
@@ -136,8 +131,7 @@ Building
     pyinstaller scanned_pdf_sorter/pdf_sorter_gui.py  -n pdf_sorter_app --hidden-import PIL._tkinter_finderclear --onefile
     ```
 
-Config.ini
-----------
+## Config.ini
 
 -   `tmp_dir_select` determines if the user want to select a custom
     folder for the file produced by the program
@@ -153,8 +147,7 @@ Config.ini
     purposes (it is not recommended for these other values to be changed
     at this time)**
 
-Notes
------
+## Notes
 
 -   If you want a custom window icon, have a `.png` file in the same
     directory that you are launching your application from
@@ -162,8 +155,7 @@ Notes
     OS is not supported
 -   ***Complete Windows installation instructions is a work in progress***
 
-Authors
--------
+## Authors
 
 -   **Caleb Black** - [cblacktech](https://gitlab.com/cblacktech)
 
