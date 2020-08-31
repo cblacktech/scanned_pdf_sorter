@@ -15,7 +15,7 @@ setup(
     author_email='cblacktech@gmail.com',
     description='Extracts data from the pages of a pdf file and groups the pages by the data extracted',
     long_description=long_description,
-    long_description_content_type='text/x-rst',
+    long_description_content_type='text/markdown',
     python_requires='~=3.0',
     include_package_data=True,
     dependency_links=[
