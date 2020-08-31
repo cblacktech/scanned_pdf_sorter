@@ -8,6 +8,7 @@ from tkinter import filedialog
 from tkinter import scrolledtext
 from tkinter import messagebox
 import configparser
+import re
 from PIL import Image
 import easyocr
 from pdf2image import convert_from_path
@@ -488,6 +489,11 @@ class SorterApp:
         text_file.close()
         print(f"-text extracted: {text}")
         return text
+
+    def replace_chars(self, text):
+        list_of_numbers = re.findall(r'\d+', text)
+        result_number = ''.join(list_of_numbers)
+        return result_number
 
 
 def main(config_file='config.ini'):
