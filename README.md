@@ -7,6 +7,12 @@ Introduction
 The purpose of this project is to sort and group pages of a scanned pdf
 file by the selected information that was extracted from each page.
 
+Project Links
+
+-   https://www.gitlab.com/cblacktech/scanned_pdf_sorter
+
+-   [GitKraken Board](https://app.gitkraken.com/glo/board/Xy8D66sO6gARqmUg)
+
 Prerequisites
 -------------
 
