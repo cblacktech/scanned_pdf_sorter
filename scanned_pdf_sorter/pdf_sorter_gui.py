@@ -77,15 +77,15 @@ class SorterApp:
         self.right_frame = tk.LabelFrame(self.root)
         self.tab_manager = ttk.Notebook(self.right_frame)
         self.terminal_output = scrolledtext.ScrolledText(self.tab_manager, undo=True)
-        self.error_output = scrolledtext.ScrolledText(self.tab_manager, undo=True)
-        self.tab_manager.add(self.terminal_output, text='Main')
-        self.tab_manager.add(self.error_output, text='Error')
+        self.tab_manager.add(self.terminal_output, text='Log')
         self.terminal_output.configure(state='disabled')
-        self.error_output.configure(state='disabled')
+        # self.error_output = scrolledtext.ScrolledText(self.tab_manager, undo=True)
+        # self.tab_manager.add(self.error_output, text='Error')
+        # self.error_output.configure(state='disabled')
 
         # redirecting terminal and error output
         sys.stdout = StdoutRedirector(self.terminal_output, self.root, self.tab_size, None, sys.__stdout__)
-        sys.stderr = StdoutRedirector(self.error_output, self.root, self.tab_size, 'Red', sys.__stderr__)
+        # sys.stderr = StdoutRedirector(self.error_output, self.root, self.tab_size, 'Red', sys.__stderr__)
 
         # loading config file contents
         self.config = configparser.ConfigParser()
