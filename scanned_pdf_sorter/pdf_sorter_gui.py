@@ -382,7 +382,7 @@ class SorterApp:
             text_list = os.listdir(f"{self.output_dir}/text")
             text_list.sort(key=lambda x: x.split('-')[-1].split('.')[0])
 
-            for index, image_file in enumerate(image_list):
+            for image_file in image_list:
                 image_filename = f"{self.output_dir}/images/{image_file}"
                 image_num = image_filename.split('-')[-1].split('.')[0].zfill(
                     len(str(len(text_list))))
@@ -462,12 +462,6 @@ class SorterApp:
                                             poppler_path=self.poppler_path, paths_only=True, fmt="png", thread_count=4,
                                             output_folder=f"{self.output_dir}/images")
         print(f"-Extracted {len(pdf_file_images)} images from {os.path.basename(input_file.name)}")
-
-        # for num, page in enumerate(pdf_file):
-        #     output_filename = f"{self.output_dir}/images/page_{num + 1}." \
-        #                       f"{self.config.get('SETTINGS', 'image_type', fallback='png')}"
-        #     page.save(output_filename)
-        #     print(f"-Created: {output_filename.split('/')[-1]}")
 
     def crop_image(self, input_file):
         """Crops the given image to the crop box that was selected"""
