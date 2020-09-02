@@ -33,6 +33,14 @@ setup(
         'pytesseract',
         'pyodbc',
     ],
+    extras_require={
+        'dev': [
+            'wheel',
+            'pyinstaller',
+            'pylint',
+            'pytest',
+        ],
+    },
     zip_safe=False,
     entry_points={'console_scripts': [
         'pdf_sorter_app_run = scanned_pdf_sorter.pdf_sorter_gui:main'
