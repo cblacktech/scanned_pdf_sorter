@@ -20,7 +20,8 @@ setup(
     license='',
     author='Caleb Black',
     author_email='cblacktech@gmail.com',
-    description='Extracts data from the pages of a pdf file and groups the pages by the data extracted',
+    description='A program that splits and groups pages of a PDF via the data that is extracted using OCR,'
+                'over a specified area.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     python_requires='~=3.0',
