@@ -9,3 +9,4 @@ dist
 build
 scanned_pdf_sorter.egg-info
 *.spec
+!/pdf_sorter_app.spec
