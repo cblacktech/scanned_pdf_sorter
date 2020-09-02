@@ -10,7 +10,7 @@ from tkinter import messagebox
 import configparser
 import re
 from PIL import Image
-import easyocr
+import pytesseract
 from pdf2image import convert_from_path
 from scanned_pdf_sorter.pdf_image_viewer import PdfImageViewer
 from scanned_pdf_sorter.crop_box_selector import PdfCropSelector
@@ -132,8 +132,6 @@ class SorterApp:
         self.menuBar.add_cascade(label="Viewers", menu=self.viewMenu)
         self.menuBar.add_command(label="Check", command=self.run_check)
         self.menuBar.add_command(label="Clear", command=self.clear_term)
-
-        self.reader = easyocr.Reader(['en'], gpu=False)
 
         # building left frame
         self.left_frame = tk.LabelFrame(self.root)
@@ -480,15 +478,15 @@ class SorterApp:
     def image_extract_text(self, input_file):
         """Runs an OCR scan to extract number from the given image and saves the extracted text"""
         img_name = os.path.splitext(os.path.basename(input_file))[0]
+        text_data = pytesseract.image_to_string(Image.open(input_file), lang='eng')
+        text = self.replace_chars(text_data)
 
-        result = self.reader.readtext(input_file)
-        text = result[0][1]
-
-        text_file = open(f"{self.output_dir}/text/{img_name}.txt", 'w')
-        text_file.write(text)
-        print(f"-{img_name}.txt saved")
-        text_file.close()
-        print(f"-text extracted: {text}")
+        with open(f"{self.output_dir}/text/{img_name}.txt", 'w') as text_file:
+            if text.isdigit() is False:
+                text = '0'
+            text_file.write(text)
+            print(f"-{img_name}.txt saved")
+            print(f"-text extracted: {text}")
         return text
 
     def replace_chars(self, text):
