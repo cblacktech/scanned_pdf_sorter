@@ -45,4 +45,11 @@ setup(
     entry_points={'console_scripts': [
         'pdf_sorter_app_run = scanned_pdf_sorter.pdf_sorter_gui:main'
     ]},
+    classifiers=[
+        "Development Status :: 3 - Alpha",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Operating System :: POSIX :: Linux",
+        "Operating System :: Microsoft :: Windows :: Windows 10",
+    ],
 )
