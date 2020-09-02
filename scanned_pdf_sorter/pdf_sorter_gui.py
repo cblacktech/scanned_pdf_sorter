@@ -9,6 +9,7 @@ from tkinter import scrolledtext
 from tkinter import messagebox
 import configparser
 import re
+from zipfile import ZipFile
 from PIL import Image
 import pytesseract
 from pdf2image import convert_from_path
@@ -159,7 +160,15 @@ class SorterApp:
                 break
 
         if sys.platform.startswith('win'):
-            self.poppler_path = self.config.get('SETTINGS', 'poppler_path', fallback='poppler/bin')
+            if os.path.isdir('wintools.zip') is False:
+                with ZipFile('wintools', 'r') as zipfile:
+                    zipfile.extractall()
+            if os.path.isfile('wintools.zip') and os.path.isdir('wintools'):
+                shutil.rmtree('wintools')
+                with ZipFile('wintools.zip', 'r') as zipfile:
+                    zipfile.extractall()
+            self.poppler_path = r'wintools/poppler/bin'
+            pytesseract.pytesseract.tesseract_cmd = r'wintools/tesseract.exe'
         elif sys.platform.startswith('linux'):
             self.poppler_path = None
         else:
