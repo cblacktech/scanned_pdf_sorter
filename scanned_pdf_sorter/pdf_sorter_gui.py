@@ -160,8 +160,8 @@ class SorterApp:
                 break
 
         if sys.platform.startswith('win'):
-            if os.path.isdir('wintools.zip') is False:
-                with ZipFile('wintools', 'r') as zipfile:
+            if os.path.isdir('wintools') is False:
+                with ZipFile('wintools.zip', 'r') as zipfile:
                     zipfile.extractall()
             if os.path.isfile('wintools.zip') and os.path.isdir('wintools'):
                 shutil.rmtree('wintools')
