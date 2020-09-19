@@ -9,6 +9,7 @@ from tkinter import scrolledtext
 from tkinter import messagebox
 import configparser
 import re
+from pathlib import Path
 from zipfile import ZipFile
 from PIL import Image
 import pytesseract
@@ -167,7 +168,9 @@ class SorterApp:
                 shutil.rmtree('wintools')
                 with ZipFile('wintools.zip', 'r') as zipfile:
                     zipfile.extractall()
-            self.poppler_path = r'wintools/poppler/bin'
+            for f_name in os.listdir(Path.joinpath(Path(os.getcwd()), Path('wintools'))):
+                if 'poppler' in f_name:
+                    self.poppler_path = Path.joinpath(Path(os.getcwd()), Path('wintools'), Path(f_name), Path('bin'))
             pytesseract.pytesseract.tesseract_cmd = r'wintools/tesseract.exe'
         elif sys.platform.startswith('linux'):
             self.poppler_path = None
