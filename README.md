@@ -26,6 +26,9 @@ Project Links
 
 ### Programs / Libraries
 
+-   [Python](https://www.python.org/) is required if the project is being built or
+    if being ran without compiling
+
 -   [Poppler](https://poppler.freedesktop.org) is required for the
     reading and writing of pdf files.
     -   [Poppler](https://poppler.freedesktop.org) is included in most Linux Distributions.
@@ -35,6 +38,8 @@ Project Links
     OCR functionality (Optical Character Recognition)
     -   Install [Tesseract](https://tesseract-ocr.github.io/) via your package manager
     -   Tesseract building instructions for Windows are located in the [Notes](#notes) section
+
+-   Poppler and Tesseract are included in `wintools.zip`
 
 ### Pip Packages
 
