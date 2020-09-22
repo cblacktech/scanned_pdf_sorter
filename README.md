@@ -58,6 +58,8 @@ Project Links
 
 ### Linux
 
+-   Create and Navigate to the directory for this program
+
 -   Create and activate a virtual environment:
     -   `python -m venv venv`
     -   `source ./venv/bin/activate`
