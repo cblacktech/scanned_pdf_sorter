@@ -72,22 +72,28 @@ Project Links
 
 ### Windows
 
--   Download and extract project zip file or download the project via git,
-    from the [repo](https://www.gitlab.com/cblacktech/scanned_pdf_sorter)
-    
-    
--   Navigate to project directory
+-   Create and navigate into a directory for this program
 
 -   Create and activate a virtual environment:
     -   `python -m venv venv`
     -   `.\env\Scripts\activate`
 
--   Install necessary packages via pip
-
+-   pip install via the git repo, replace `BRANCH` with the
+    desired git repo branch that you want to install (omit `@BRANCH` for default branch)
+    
     ```
-    pip install .
+    pip install git+https://www.gitlab.com/cblacktech/scanned_pdf_sorter@BRANCH
     ```
 
+-   Download `wintools.zip` from repo and move the zip file to the program directory (Do one of the following):
+
+    -   ```
+        curl -LJO https://gitlab.com/cblacktech/scanned_pdf_sorter/-/raw/BRANCH/wintools.zip
+        ```
+    
+    -   Download the zip file from this the [repo](https://www.gitlab.com/cblacktech/scanned_pdf_sorter).
+            By clicking the `wintools.zip` file in the repo, then clicking the download button.
+    
 -   To run the program, run this entry_point command in the terminal
 
     ```
