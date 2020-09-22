@@ -17,7 +17,6 @@ setup(
         ]
     ),
     url='https://gitlab.com/cblacktech/scanned_pdf_sorter',
-    license='',
     author='Caleb Black',
     author_email='cblacktech@gmail.com',
     description='A program that splits and groups pages of a PDF via the data that is extracted using OCR,'
@@ -47,6 +46,7 @@ setup(
     ]},
     classifiers=[
         "Development Status :: 3 - Alpha",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
         "Operating System :: POSIX :: Linux",
