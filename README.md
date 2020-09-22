@@ -112,8 +112,10 @@ Project Links
 -   Pip install the packages needed for development / building purposes
 
     ```
-    pip install .[dev]
+    pip install -e .[dev]
     ```
+    
+    *(If project is git cloned, or downloaded)*
     
     or
     
@@ -121,9 +123,10 @@ Project Links
     pip install git+https://www.gitlab.com/cblacktech/scanned_pdf_sorter@BRANCH[dev]
     ```
     
-    *(where you replace `BRANCH` with the desired git repo branch that you want to install)*
+    *(where you replace `BRANCH` with the desired git repo branch that you want to install,*
+    *omit `@BRANCH` for default branch)*
 
--   Run pyinstaller using the spec file
+-   Run pyinstaller using a spec file, for example
     
     ```
     pyinstaller pdf_sorter_app.spec
