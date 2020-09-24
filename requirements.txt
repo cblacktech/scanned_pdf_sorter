@@ -1,7 +1,5 @@
 matplotlib==3.2.2
 pyodbc
-easyocr
+pyinstaller
 Pillow
 pdf2image
-torch==1.6.0+cpu
-torchvision==0.7.0+cpu

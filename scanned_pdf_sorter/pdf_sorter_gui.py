@@ -8,8 +8,11 @@ from tkinter import filedialog
 from tkinter import scrolledtext
 from tkinter import messagebox
 import configparser
+import re
+from pathlib import Path
+from zipfile import ZipFile
 from PIL import Image
-import easyocr
+import pytesseract
 from pdf2image import convert_from_path
 from scanned_pdf_sorter.pdf_image_viewer import PdfImageViewer
 from scanned_pdf_sorter.crop_box_selector import PdfCropSelector
@@ -60,13 +63,6 @@ class SorterApp:
     """
 
     def __init__(self, root, config_file='config.ini'):
-        if sys.platform.startswith('win'):
-            self.poppler_path = self.config.get('SETTINGS', 'poppler_path', fallback='poppler/bin')
-        elif sys.platform.startswith('linux'):
-            self.poppler_path = None
-        else:
-            sys.exit()
-
         self.root = root
         self.tab_size = 8
         self.line_string = '-' * 40
@@ -84,22 +80,23 @@ class SorterApp:
         self.right_frame = tk.LabelFrame(self.root)
         self.tab_manager = ttk.Notebook(self.right_frame)
         self.terminal_output = scrolledtext.ScrolledText(self.tab_manager, undo=True)
-        self.error_output = scrolledtext.ScrolledText(self.tab_manager, undo=True)
-        self.tab_manager.add(self.terminal_output, text='Main')
-        self.tab_manager.add(self.error_output, text='Error')
+        self.tab_manager.add(self.terminal_output, text='Log')
         self.terminal_output.configure(state='disabled')
-        self.error_output.configure(state='disabled')
+        # self.error_output = scrolledtext.ScrolledText(self.tab_manager, undo=True)
+        # self.tab_manager.add(self.error_output, text='Error')
+        # self.error_output.configure(state='disabled')
 
         # redirecting terminal and error output
         sys.stdout = StdoutRedirector(self.terminal_output, self.root, self.tab_size, None, sys.__stdout__)
-        sys.stderr = StdoutRedirector(self.error_output, self.root, self.tab_size, 'Red', sys.__stderr__)
+        # sys.stderr = StdoutRedirector(self.error_output, self.root, self.tab_size, 'Red', sys.__stderr__)
 
         # loading config file contents
         self.config = configparser.ConfigParser()
         self.config_file = config_file
         # if the config file does not exist, a new one with default values will be created
         default_config_create(self.config_file)
-        self.load_config()
+        self.load_box_config()
+        print(f"-Loading crop box coordinates from {self.config_file}")
 
         # test_database = MsSqlQuery(driver=self.config.get('SQL_SERVER', 'driver'),
         #                            server_ip=self.config.get('SQL_SERVER', 'server_ip'),
@@ -138,21 +135,13 @@ class SorterApp:
         self.menuBar.add_command(label="Check", command=self.run_check)
         self.menuBar.add_command(label="Clear", command=self.clear_term)
 
-        self.reader = easyocr.Reader(['en'], gpu=False)
-
         # building left frame
         self.left_frame = tk.LabelFrame(self.root)
         self.input_label = tk.Label(self.left_frame, text='Input File')
         self.left_spacer = tk.Label(self.left_frame, padx=8)
         self.input_file_btn = tk.Button(self.left_frame, text='INPUT FILE', command=self.select_input_file)
-        if self.config.getboolean('SETTINGS', 'tmp_dir_select'):
-            self.output_dir_label = tk.Label(self.left_frame, text='Temp Out Dir')
-            self.output_dir_btn = tk.Button(self.left_frame, text="TMP DIR", command=self.select_output_dir)
-            self.output_dir_label.grid(row=1, column=0, sticky='w')
-            self.output_dir_btn.grid(row=1, column=2, sticky='ew')
-        else:
-            self.output_dir = f"{os.getcwd()}/pdf_sorter_out"
-            print(f"-Selected Directory: {self.output_dir}")
+        self.output_dir = f"{os.getcwd()}/pdf_sorter_out"
+        print(f"-Selected Directory: {self.output_dir}")
 
         # packing left frame
         self.left_frame.pack(padx=0, pady=0, side='left', fill='y')
@@ -170,8 +159,25 @@ class SorterApp:
                 print(f"-{f_name} loaded as program icon")
                 self.root.iconphoto(self, tk.PhotoImage(file=f"{os.getcwd()}/{f_name}"))
                 break
-        self.load_box_config()
-        print(f"-Loading crop box coordinates from {self.config_file}")
+
+        if sys.platform.startswith('win'):
+            if os.path.isdir('wintools') is False:
+                with ZipFile('wintools.zip', 'r') as zipfile:
+                    zipfile.extractall()
+            if os.path.isfile('wintools.zip') and os.path.isdir('wintools'):
+                shutil.rmtree('wintools')
+                with ZipFile('wintools.zip', 'r') as zipfile:
+                    zipfile.extractall()
+            for f_name in os.listdir(Path.joinpath(Path(os.getcwd()), Path('wintools'))):
+                if 'poppler' in f_name:
+                    self.poppler_path = Path.joinpath(Path(os.getcwd()), Path('wintools'), Path(f_name), Path('bin'))
+            pytesseract.pytesseract.tesseract_cmd = r'wintools/tesseract.exe'
+        elif sys.platform.startswith('linux'):
+            self.poppler_path = None
+        else:
+            sys.exit()
+
+        self.root.protocol('WM_DELETE_WINDOW', lambda: self.deactivate(confirmation_box=True))
         self.root.deiconify()
 
     def load_config(self):
@@ -261,6 +267,7 @@ class SorterApp:
         if self.run_check():
             print("-Starting quick")
             self.run_splitter()
+            self.run_crop_selector()
             self.run_cropping()
             self.run_ocr()
             self.run_merge()
@@ -378,7 +385,7 @@ class SorterApp:
             text_list = os.listdir(f"{self.output_dir}/text")
             text_list.sort(key=lambda x: x.split('-')[-1].split('.')[0])
 
-            for index, image_file in enumerate(image_list):
+            for image_file in image_list:
                 image_filename = f"{self.output_dir}/images/{image_file}"
                 image_num = image_filename.split('-')[-1].split('.')[0].zfill(
                     len(str(len(text_list))))
@@ -459,12 +466,6 @@ class SorterApp:
                                             output_folder=f"{self.output_dir}/images")
         print(f"-Extracted {len(pdf_file_images)} images from {os.path.basename(input_file.name)}")
 
-        # for num, page in enumerate(pdf_file):
-        #     output_filename = f"{self.output_dir}/images/page_{num + 1}." \
-        #                       f"{self.config.get('SETTINGS', 'image_type', fallback='png')}"
-        #     page.save(output_filename)
-        #     print(f"-Created: {output_filename.split('/')[-1]}")
-
     def crop_image(self, input_file):
         """Crops the given image to the crop box that was selected"""
         img_name = os.path.basename(input_file)
@@ -483,16 +484,21 @@ class SorterApp:
     def image_extract_text(self, input_file):
         """Runs an OCR scan to extract number from the given image and saves the extracted text"""
         img_name = os.path.splitext(os.path.basename(input_file))[0]
+        text_data = pytesseract.image_to_string(Image.open(input_file), lang='eng')
+        text = self.replace_chars(text_data)
 
-        result = self.reader.readtext(input_file)
-        text = result[0][1]
-
-        text_file = open(f"{self.output_dir}/text/{img_name}.txt", 'w')
-        text_file.write(text)
-        print(f"-{img_name}.txt saved")
-        text_file.close()
-        print(f"-text extracted: {text}")
+        with open(f"{self.output_dir}/text/{img_name}.txt", 'w') as text_file:
+            if text.isdigit() is False:
+                text = '0'
+            text_file.write(text)
+            print(f"-{img_name}.txt saved")
+            print(f"-text extracted: {text}")
         return text
+
+    def replace_chars(self, text):
+        list_of_numbers = re.findall(r'\d+', text)
+        result_number = ''.join(list_of_numbers)
+        return result_number
 
 
 def main(config_file='config.ini'):
