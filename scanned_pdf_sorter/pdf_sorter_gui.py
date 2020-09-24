@@ -51,9 +51,6 @@ class SorterApp(SorterTools):
     each page of the pdf file. This program will then group together the pages that have the same information produced
     by the OCR scan.
 
-    This program needs the following packages installed within a python environment for proper functionality:
-        -Pillow, pdf2image, easyocr
-
     Warning: Currently the stacktrace for any errors that occur will only be visible via the terminal
     """
 
