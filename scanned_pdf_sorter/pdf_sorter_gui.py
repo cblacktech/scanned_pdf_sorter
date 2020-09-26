@@ -1,15 +1,11 @@
 import os
 import sys
-import json
-import shutil
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 from tkinter import scrolledtext
 from tkinter import messagebox
 import configparser
-import re
-from pathlib import Path
 from scanned_pdf_sorter.pdf_sorter_tools import SorterTools
 from scanned_pdf_sorter.pdf_image_viewer import PdfImageViewer
 from scanned_pdf_sorter.crop_box_selector import PdfCropSelector

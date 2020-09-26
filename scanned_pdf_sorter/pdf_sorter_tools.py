@@ -74,8 +74,8 @@ class SorterTools:
             self.config.write(config_file)
 
     def load_box_config(self):
+        self.load_config()
         if self.config.has_section('CROP_BOX'):
-            self.load_config()
             self.crop_box['start']['x'] = self.config.getint('CROP_BOX', 'start_x')
             self.crop_box['start']['y'] = self.config.getint('CROP_BOX', 'start_y')
             self.crop_box['end']['x'] = self.config.getint('CROP_BOX', 'end_x')
@@ -146,7 +146,7 @@ class SorterTools:
 
             crop_list = os.listdir(f"{self.output_dir}/crops")
             crop_list.sort(key=lambda x: x.split('-')[-1].split('.')[0])
-            for index, image_file in enumerate(crop_list):
+            for image_file in crop_list:
                 crop_filename = f"{self.output_dir}/crops/{image_file}"
                 self.image_extract_text(crop_filename)
 
