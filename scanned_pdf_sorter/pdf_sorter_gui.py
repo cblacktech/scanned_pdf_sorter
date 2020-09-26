@@ -219,14 +219,6 @@ class SorterApp(SorterTools):
                                 size_divisor=self.config.getint('SETTINGS', 'crop_display_divisor', fallback=2))
         viewer.activate()
 
-    def run_main_viewer(self):
-        """Displays the extracted images from the pdf as well as the information that was extracted from the OCR scan"""
-        print("-Starting main viewer")
-        viewer = PdfImageViewer(self.output_dir,
-                                size_divisor=self.config.getint('SETTINGS', 'main_display_divisor', fallback=8))
-        viewer.activate()
-        print("-Stopping main viewer")
-
 
 def main(config_file='config.ini'):
     app = SorterApp(tk.Tk(), config_file)

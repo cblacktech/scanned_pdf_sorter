@@ -10,6 +10,7 @@ from PIL import Image
 import pytesseract
 from pdf2image import convert_from_path
 from scanned_pdf_sorter.pdf_image_config import default_config_create
+from scanned_pdf_sorter.pdf_image_viewer import PdfImageViewer
 from scanned_pdf_sorter.mssql_query import MsSqlQuery
 
 
@@ -124,10 +125,19 @@ class SorterTools:
             self.run_crop_selector()
             self.run_cropping()
             self.run_ocr()
+            self.run_main_viewer()
             self.run_merge()
             print("-Stopping quick")
         else:
             print("-Unable to run quick")
+
+    def run_main_viewer(self):
+        """Displays the extracted images from the pdf as well as the information that was extracted from the OCR scan"""
+        print("-Starting main viewer")
+        viewer = PdfImageViewer(self.output_dir,
+                                size_divisor=self.config.getint('SETTINGS', 'main_display_divisor', fallback=8))
+        viewer.activate()
+        print("-Stopping main viewer")
 
     def run_ocr(self):
         if self.run_check():
