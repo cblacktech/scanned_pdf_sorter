@@ -13,6 +13,7 @@ from pathlib import Path
 from scanned_pdf_sorter.pdf_sorter_tools import SorterTools
 from scanned_pdf_sorter.pdf_image_viewer import PdfImageViewer
 from scanned_pdf_sorter.crop_box_selector import PdfCropSelector
+from scanned_pdf_sorter.config_editor import ConfigEditor
 
 
 class StdoutRedirector:
@@ -98,8 +99,14 @@ class SorterApp(SorterTools):
         self.viewMenu.add_command(label='Crop Viewer', command=lambda: [self.load_config(), self.run_crop_viewer()])
         self.viewMenu.add_command(label='Image+Text Viewer', command=lambda: self.run_main_viewer())
 
+        self.optionMenu = tk.Menu(self.menuBar, tearoff=False)
+        self.optionMenu.add_command(label='Settings', command=lambda: self.run_config_editor(section='SETTINGS'))
+        self.optionMenu.add_command(label='Crop Box', command=lambda: self.run_config_editor(section='CROP_BOX'))
+        self.optionMenu.add_command(label='SQL Server', command=lambda: self.run_config_editor(section='SQL_SERVER'))
+
         self.menuBar.add_cascade(label="Run", menu=self.runMenu)
         self.menuBar.add_cascade(label="Viewers", menu=self.viewMenu)
+        self.menuBar.add_cascade(label="Options", menu=self.optionMenu)
         self.menuBar.add_command(label="Check", command=self.run_check)
         self.menuBar.add_command(label="Clear", command=self.clear_term)
 
@@ -171,6 +178,12 @@ class SorterApp(SorterTools):
         self.output_dir = filedialog.askdirectory(title='Select Output Directory')
         self.output_dir += '/pdf_sorter_out'
         print(f"-Selected Directory: {self.output_dir}")
+
+    def run_config_editor(self, section=''):
+        config_editor = ConfigEditor(config_file=self.config_file, section=section)
+        config_editor.activate()
+        self.write_config()
+        self.load_config()
 
     def run_crop_selector(self):
         """Opens a tkinter window and allows the user to select which area all of the images should be cropped to"""
