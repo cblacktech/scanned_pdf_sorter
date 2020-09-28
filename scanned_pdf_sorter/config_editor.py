@@ -32,10 +32,12 @@ class ConfigEditor:
             for index, sec in enumerate(self.config[self.section]):
                 self.widgets[sec] = {}
                 self.widgets[sec]['label'] = tk.Label(self.main_frame, text=sec)
+                spacer = tk.Label(self.main_frame, padx=8)
                 self.widgets[sec]['entry'] = tk.Entry(self.main_frame)
                 self.widgets[sec]['entry'].insert(-1, self.config[self.section][sec])
                 self.widgets[sec]['label'].grid(row=index, column=0, sticky='w')
-                self.widgets[sec]['entry'].grid(row=index, column=1, sticky='w')
+                spacer.grid(row=index, column=1, sticky='w')
+                self.widgets[sec]['entry'].grid(row=index, column=2, sticky='w')
         else:
             print(f'-Unable to launch config editor for: {self.section}')
             self.deactivate()
