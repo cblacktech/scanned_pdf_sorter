@@ -15,6 +15,10 @@ from scanned_pdf_sorter.mssql_query import MsSqlQuery
 
 
 class SorterTools:
+    """Scanned PDF Sorter Tools
+
+    This contains backend tools that are used by the Scanned PDF Sorter App
+    """
 
     def __init__(self, config_file='config.ini'):
         self.tab_size = 8
