@@ -164,8 +164,8 @@ class SorterTools:
                 img_data = img_data.convert('RGB')
                 img_list.append(img_data)
             im1 = img_list.pop(0)
-            im1.save(f"{self.output_dir}/pdfs/pdf-{str(num)}.pdf", save_all=True, append_images=img_list)
-            print(f"-file pdf-{str(num)}.pdf saved")
+            im1.save(f"{self.output_dir}/pdfs/pdf-{str(key)}.pdf", save_all=True, append_images=img_list)
+            print(f"-file pdf-{str(key)}.pdf saved")
 
     def save_pdf_dict(self):
         if os.path.isfile(os.path.join(self.output_dir, 'pdf_dict.json')):
