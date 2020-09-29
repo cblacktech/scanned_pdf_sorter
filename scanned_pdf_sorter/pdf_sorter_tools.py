@@ -22,6 +22,8 @@ class SorterTools:
 
         self.input_file = None
         self.output_dir = None
+        self.database = None
+        self.db_connected = False
         self.output_dict = {}
         self.crop_box = {'start': {}, 'end': {}}
 
@@ -32,19 +34,6 @@ class SorterTools:
         default_config_create(self.config_file)
         self.load_box_config()
         print(f"-Loading crop box coordinates from {self.config_file}")
-
-        # try:
-        #     test_database = MsSqlQuery(driver=self.config.get('SQL_SERVER', 'driver'),
-        #                                server_ip=self.config.get('SQL_SERVER', 'server_ip'),
-        #                                database_name=self.config.get('SQL_SERVER', 'database'),
-        #                                table_name=self.config.get('SQL_SERVER', 'table'),
-        #                                id_column=self.config.get('SQL_SERVER', 'id_column'),
-        #                                email_column=self.config.get('SQL_SERVER', 'email_column'),
-        #                                sql_login=self.config.getboolean('SQL_SERVER', 'sql_login'),
-        #                                username=self.config.get('SQL_SERVER', 'username'),
-        #                                password=self.config.get('SQL_SERVER', 'password'))
-        # except Exception as e:
-        #     print(e)
 
         self.output_dir = f"{os.getcwd()}/pdf_sorter_out"
         print(f"-Selected Directory: {self.output_dir}")
@@ -250,8 +239,8 @@ class SorterTools:
                     output_dict[extracted_text] = {}
                     temp_set.append(image_filename)
                     output_dict[extracted_text]['images'] = temp_set
-                    # output_dict[extracted_text]['email'] = database.database_query(extracted_text)
-                output_dict[extracted_text]['pdf'] = f"{self.output_dir}/pdfs/pdf-{extracted_text}.pdf"
+                    output_dict[extracted_text]['email'] = self.query_database(extracted_text)
+                    output_dict[extracted_text]['pdf'] = f"{self.output_dir}/pdfs/pdf-{extracted_text}.pdf"
 
             return output_dict
         else:
@@ -348,3 +337,13 @@ class SorterTools:
         result_number = ''.join(list_of_numbers)
         return result_number
 
+    def connect_to_database(self):
+        self.database = MsSqlQuery(config_file=self.config_file)
+        self.db_connected = self.database.build_connection(trusted=False)
+
+    def query_database(self, db_query_txt):
+        if self.db_connected:
+            text = self.database.database_query(db_query_txt)
+            return text
+        else:
+            return None
