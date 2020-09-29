@@ -65,13 +65,13 @@ class SorterApp(SorterTools):
         self.terminal_output = scrolledtext.ScrolledText(self.tab_manager, undo=True)
         self.tab_manager.add(self.terminal_output, text='Log')
         self.terminal_output.configure(state='disabled')
-        # self.error_output = scrolledtext.ScrolledText(self.tab_manager, undo=True)
-        # self.tab_manager.add(self.error_output, text='Error')
-        # self.error_output.configure(state='disabled')
+        self.error_output = scrolledtext.ScrolledText(self.tab_manager, undo=True)
+        self.tab_manager.add(self.error_output, text='Error')
+        self.error_output.configure(state='disabled')
 
         # redirecting terminal and error output
         sys.stdout = StdoutRedirector(self.terminal_output, self.root, self.tab_size, None, sys.__stdout__)
-        # sys.stderr = StdoutRedirector(self.error_output, self.root, self.tab_size, 'Red', sys.__stderr__)
+        sys.stderr = StdoutRedirector(self.error_output, self.root, self.tab_size, 'Red', sys.__stderr__)
 
         # building menu
         self.menuBar = tk.Menu(self.root)
@@ -134,9 +134,10 @@ class SorterApp(SorterTools):
 
     def clear_term(self):
         """deletes all text from the text box"""
-        self.terminal_output.configure(state='normal')
-        self.terminal_output.delete('1.0', 'end')
-        self.terminal_output.configure(state='disabled')
+        for output in (self.terminal_output, self.error_output):
+            output.configure(state='normal')
+            output.delete('1.0', 'end')
+            output.configure(state='disabled')
 
     def activate(self):
         """Starts the mainloop for the tk main window"""
