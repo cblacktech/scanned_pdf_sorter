@@ -149,6 +149,7 @@ class SorterTools:
 
     def run_merge(self):
         pdf_dict = self.get_pdf_dict()
+        print('-Starting merge')
         for num, key in enumerate(pdf_dict.keys()):
             pdf_images = pdf_dict[key]['images']
             img_list = []
@@ -159,6 +160,7 @@ class SorterTools:
             im1 = img_list.pop(0)
             im1.save(f"{self.output_dir}/pdfs/pdf-{str(key)}.pdf", save_all=True, append_images=img_list)
             print(f"-file pdf-{str(key)}.pdf saved")
+        print('-Stopping merge')
 
     def save_pdf_dict(self):
         if os.path.isfile(os.path.join(self.output_dir, 'pdf_dict.json')):
