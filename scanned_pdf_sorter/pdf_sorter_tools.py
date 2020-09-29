@@ -251,6 +251,8 @@ class SorterTools:
                     temp_set.append(image_filename)
                     output_dict[extracted_text]['images'] = temp_set
                     # output_dict[extracted_text]['email'] = database.database_query(extracted_text)
+                output_dict[extracted_text]['pdf'] = f"{self.output_dir}/pdfs/pdf-{extracted_text}.pdf"
+
             return output_dict
         else:
             return {'null': 'null'}
