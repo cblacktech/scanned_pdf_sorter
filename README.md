@@ -179,4 +179,5 @@ Project Links
 
 ## Authors
 
--   **Caleb Black** - [cblacktech](https://gitlab.com/cblacktech)
+-   **Caleb Black** - cblacktech | [GitLab](https://gitlab.com/cblacktech)
+    | [GitHub](https://github.com/cblacktech)
