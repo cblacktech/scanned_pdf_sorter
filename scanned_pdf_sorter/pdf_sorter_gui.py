@@ -98,7 +98,7 @@ class SorterApp(SorterTools):
         self.optionMenu = tk.Menu(self.menuBar, tearoff=False)
         self.optionMenu.add_command(label='Settings', command=lambda: self.run_config_editor(section='SETTINGS'))
         self.optionMenu.add_command(label='Crop Box', command=lambda: self.run_config_editor(section='CROP_BOX'))
-        self.optionMenu.add_command(label='SQL Server', command=lambda: self.run_config_editor(section='SQL_SERVER'))
+        # self.optionMenu.add_command(label='SQL Server', command=lambda: self.run_config_editor(section='SQL_SERVER'))
 
         self.menuBar.add_cascade(label="Run", menu=self.runMenu)
         self.menuBar.add_cascade(label="Viewers", menu=self.viewMenu)
