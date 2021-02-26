@@ -7,7 +7,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='scanned-pdf-sorter',
-    version='0.4.20dev',
+    version='0.4.21',
     packages=find_packages(
         include=[
             'scanned_pdf_sorter'
