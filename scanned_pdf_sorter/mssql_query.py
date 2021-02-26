@@ -1,43 +1,55 @@
 import pyodbc
+import configparser
 
 
 class MsSqlQuery:
 
-    def __init__(self, driver='', server_ip='172.17.0.2,1433', database_name='',
-                 table_name='', id_column='', email_column='', filter_column='',
-                 query_column='', sql_login=False, username='', password=''):
-        # self.driver = "ODBC Driver 17 for SQL Server"
-        self.driver = driver
-        self.ip = server_ip
-        self.database_name = database_name
-        self.table_name = table_name
-        self.filter_column = filter_column
-        self.query_column = query_column
-        self.sql_login = sql_login
-        self.username = username
-        self.password = password
-        self.conn = None
-        self.cursor = None
+    def __init__(self, config_file='config.ini'):
+        self.config = configparser.ConfigParser()
+        self.config.read(config_file)
+        if self.config.has_section('SQL_SERVER'):
+            sql_config = self.config['SQL_SERVER']
+            self.driver = sql_config.get('driver')
+            self.ip = sql_config.get('server_ip')
+            self.database_name = sql_config.get('database')
+            self.table_name = sql_config.get('table')
+            self.filter_column = sql_config.get('id_column')
+            self.query_column = sql_config.get('email_column')
+            self.sql_login = sql_config.getboolean('sql_login')
+            self.username = sql_config.get('SA')
+            self.password = sql_config.get('password')
+            self.conn = None
+            self.cursor = None
 
     def build_connection(self, trusted=True):
-        if trusted:
-            self.conn = pyodbc.connect(f"DRIVER={self.driver};SERVER={self.ip};"
-                                       f"DATABASE={self.database_name};TRUSTED_CONNECTION=YES;")
-        else:
-            self.conn = pyodbc.connect(f"DRIVER={self.driver};SERVER={self.ip};"
-                                       f"DATABASE={self.database_name};UID={self.username};PWD={self.password}")
+        try:
+            if trusted:
+                self.conn = pyodbc.connect(f"DRIVER={self.driver};SERVER={self.ip};"
+                                           f"DATABASE={self.database_name};TRUSTED_CONNECTION=YES;")
+            else:
+                self.conn = pyodbc.connect(f"DRIVER={self.driver};SERVER={self.ip};"
+                                           f"DATABASE={self.database_name};UID={self.username};PWD={self.password}")
+            return True
+        except Exception as e:
+            self.conn = None
+            print(e)
+            return False
+
+    def test_connection(self):
+        pass
 
     def database_query(self, customer_num):
-        curs = self.conn.cursor()
-        # query = f"SELECT email FROM Customers WHERE id = {str(customer_num)}"
-        query = f"{self.sql_query} {str(customer_num)}"
-        curs.execute(query)
-        results = curs.fetchone()
+        with self.conn.cursor() as curs:
+            curs.execute(f"""
+                SELECT {self.query_column}
+                FROM {self.table_name}
+                where {self.filter_column} = {str(customer_num)};
+            """)
+            results = curs.fetchone()
         return results[0]
 
 
 if __name__ == '__main__':
-    database = MsSqlQuery(server_ip='172.17.0.2,1433', database_name='TestDB',
-                          username='SA', password='ToorPass39')
+    database = MsSqlQuery(config_file='config.ini')
     database.build_connection(trusted=False)
     print(database.database_query(1175))

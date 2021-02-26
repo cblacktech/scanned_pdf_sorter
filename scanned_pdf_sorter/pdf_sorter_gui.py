@@ -1,18 +1,15 @@
 import os
 import sys
-import json
-import shutil
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 from tkinter import scrolledtext
 from tkinter import messagebox
 import configparser
-import re
-from pathlib import Path
 from scanned_pdf_sorter.pdf_sorter_tools import SorterTools
 from scanned_pdf_sorter.pdf_image_viewer import PdfImageViewer
 from scanned_pdf_sorter.crop_box_selector import PdfCropSelector
+from scanned_pdf_sorter.config_editor import ConfigEditor
 
 
 class StdoutRedirector:
@@ -51,9 +48,6 @@ class SorterApp(SorterTools):
     each page of the pdf file. This program will then group together the pages that have the same information produced
     by the OCR scan.
 
-    This program needs the following packages installed within a python environment for proper functionality:
-        -Pillow, pdf2image, easyocr
-
     Warning: Currently the stacktrace for any errors that occur will only be visible via the terminal
     """
 
@@ -71,13 +65,13 @@ class SorterApp(SorterTools):
         self.terminal_output = scrolledtext.ScrolledText(self.tab_manager, undo=True)
         self.tab_manager.add(self.terminal_output, text='Log')
         self.terminal_output.configure(state='disabled')
-        # self.error_output = scrolledtext.ScrolledText(self.tab_manager, undo=True)
-        # self.tab_manager.add(self.error_output, text='Error')
-        # self.error_output.configure(state='disabled')
+        self.error_output = scrolledtext.ScrolledText(self.tab_manager, undo=True)
+        self.tab_manager.add(self.error_output, text='Error')
+        self.error_output.configure(state='disabled')
 
         # redirecting terminal and error output
         sys.stdout = StdoutRedirector(self.terminal_output, self.root, self.tab_size, None, sys.__stdout__)
-        # sys.stderr = StdoutRedirector(self.error_output, self.root, self.tab_size, 'Red', sys.__stderr__)
+        sys.stderr = StdoutRedirector(self.error_output, self.root, self.tab_size, 'Red', sys.__stderr__)
 
         # building menu
         self.menuBar = tk.Menu(self.root)
@@ -101,8 +95,14 @@ class SorterApp(SorterTools):
         self.viewMenu.add_command(label='Crop Viewer', command=lambda: [self.load_config(), self.run_crop_viewer()])
         self.viewMenu.add_command(label='Image+Text Viewer', command=lambda: self.run_main_viewer())
 
+        self.optionMenu = tk.Menu(self.menuBar, tearoff=False)
+        self.optionMenu.add_command(label='Settings', command=lambda: self.run_config_editor(section='SETTINGS'))
+        self.optionMenu.add_command(label='Crop Box', command=lambda: self.run_config_editor(section='CROP_BOX'))
+        # self.optionMenu.add_command(label='SQL Server', command=lambda: self.run_config_editor(section='SQL_SERVER'))
+
         self.menuBar.add_cascade(label="Run", menu=self.runMenu)
         self.menuBar.add_cascade(label="Viewers", menu=self.viewMenu)
+        self.menuBar.add_cascade(label="Options", menu=self.optionMenu)
         self.menuBar.add_command(label="Check", command=self.run_check)
         self.menuBar.add_command(label="Clear", command=self.clear_term)
 
@@ -134,9 +134,10 @@ class SorterApp(SorterTools):
 
     def clear_term(self):
         """deletes all text from the text box"""
-        self.terminal_output.configure(state='normal')
-        self.terminal_output.delete('1.0', 'end')
-        self.terminal_output.configure(state='disabled')
+        for output in (self.terminal_output, self.error_output):
+            output.configure(state='normal')
+            output.delete('1.0', 'end')
+            output.configure(state='disabled')
 
     def activate(self):
         """Starts the mainloop for the tk main window"""
@@ -175,6 +176,12 @@ class SorterApp(SorterTools):
         self.output_dir += '/pdf_sorter_out'
         print(f"-Selected Directory: {self.output_dir}")
 
+    def run_config_editor(self, section=''):
+        config_editor = ConfigEditor(config_file=self.config_file, section=section)
+        config_editor.activate()
+        self.write_config()
+        self.load_config()
+
     def run_crop_selector(self):
         """Opens a tkinter window and allows the user to select which area all of the images should be cropped to"""
         print('-Starting Crop Box Selector')
@@ -208,14 +215,6 @@ class SorterApp(SorterTools):
         viewer = PdfImageViewer((self.output_dir + '/crops'), only_images_boolean=True,
                                 size_divisor=self.config.getint('SETTINGS', 'crop_display_divisor', fallback=2))
         viewer.activate()
-
-    def run_main_viewer(self):
-        """Displays the extracted images from the pdf as well as the information that was extracted from the OCR scan"""
-        print("-Starting main viewer")
-        viewer = PdfImageViewer(self.output_dir,
-                                size_divisor=self.config.getint('SETTINGS', 'main_display_divisor', fallback=8))
-        viewer.activate()
-        print("-Stopping main viewer")
 
 
 def main(config_file='config.ini'):

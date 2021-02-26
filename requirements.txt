@@ -3,3 +3,4 @@ pyodbc
 pyinstaller
 Pillow
 pdf2image
+pytesseract

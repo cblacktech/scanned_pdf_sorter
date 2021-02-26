@@ -29,6 +29,9 @@ Project Links
 -   [Python](https://www.python.org/) is required if the project is being built or
     if being ran without compiling
 
+-   [ODBC Diver 17](https://docs.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver15#download-for-windows)
+    for connection and querying an SQL Database
+
 -   [Poppler](https://poppler.freedesktop.org) is required for the
     reading and writing of pdf files.
     -   [Poppler](https://poppler.freedesktop.org) is included in most Linux Distributions.
@@ -176,4 +179,5 @@ Project Links
 
 ## Authors
 
--   **Caleb Black** - [cblacktech](https://gitlab.com/cblacktech)
+-   **Caleb Black** - cblacktech | [GitLab](https://gitlab.com/cblacktech)
+    | [GitHub](https://github.com/cblacktech)

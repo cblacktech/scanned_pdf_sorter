@@ -10,10 +10,15 @@ from PIL import Image
 import pytesseract
 from pdf2image import convert_from_path
 from scanned_pdf_sorter.pdf_image_config import default_config_create
+from scanned_pdf_sorter.pdf_image_viewer import PdfImageViewer
 from scanned_pdf_sorter.mssql_query import MsSqlQuery
 
 
 class SorterTools:
+    """Scanned PDF Sorter Tools
+
+    This contains backend tools that are used by the Scanned PDF Sorter App
+    """
 
     def __init__(self, config_file='config.ini'):
         self.tab_size = 8
@@ -21,6 +26,8 @@ class SorterTools:
 
         self.input_file = None
         self.output_dir = None
+        self.database = None
+        self.db_connected = False
         self.output_dict = {}
         self.crop_box = {'start': {}, 'end': {}}
 
@@ -31,19 +38,6 @@ class SorterTools:
         default_config_create(self.config_file)
         self.load_box_config()
         print(f"-Loading crop box coordinates from {self.config_file}")
-
-        # try:
-        #     test_database = MsSqlQuery(driver=self.config.get('SQL_SERVER', 'driver'),
-        #                                server_ip=self.config.get('SQL_SERVER', 'server_ip'),
-        #                                database_name=self.config.get('SQL_SERVER', 'database'),
-        #                                table_name=self.config.get('SQL_SERVER', 'table'),
-        #                                id_column=self.config.get('SQL_SERVER', 'id_column'),
-        #                                email_column=self.config.get('SQL_SERVER', 'email_column'),
-        #                                sql_login=self.config.getboolean('SQL_SERVER', 'sql_login'),
-        #                                username=self.config.get('SQL_SERVER', 'username'),
-        #                                password=self.config.get('SQL_SERVER', 'password'))
-        # except Exception as e:
-        #     print(e)
 
         self.output_dir = f"{os.getcwd()}/pdf_sorter_out"
         print(f"-Selected Directory: {self.output_dir}")
@@ -73,8 +67,8 @@ class SorterTools:
             self.config.write(config_file)
 
     def load_box_config(self):
+        self.load_config()
         if self.config.has_section('CROP_BOX'):
-            self.load_config()
             self.crop_box['start']['x'] = self.config.getint('CROP_BOX', 'start_x')
             self.crop_box['start']['y'] = self.config.getint('CROP_BOX', 'start_y')
             self.crop_box['end']['x'] = self.config.getint('CROP_BOX', 'end_x')
@@ -124,10 +118,19 @@ class SorterTools:
             self.run_crop_selector()
             self.run_cropping()
             self.run_ocr()
+            self.run_main_viewer()
             self.run_merge()
             print("-Stopping quick")
         else:
             print("-Unable to run quick")
+
+    def run_main_viewer(self):
+        """Displays the extracted images from the pdf as well as the information that was extracted from the OCR scan"""
+        print("-Starting main viewer")
+        viewer = PdfImageViewer(self.output_dir,
+                                size_divisor=self.config.getint('SETTINGS', 'main_display_divisor', fallback=8))
+        viewer.activate()
+        print("-Stopping main viewer")
 
     def run_ocr(self):
         if self.run_check():
@@ -136,7 +139,7 @@ class SorterTools:
 
             crop_list = os.listdir(f"{self.output_dir}/crops")
             crop_list.sort(key=lambda x: x.split('-')[-1].split('.')[0])
-            for index, image_file in enumerate(crop_list):
+            for image_file in crop_list:
                 crop_filename = f"{self.output_dir}/crops/{image_file}"
                 self.image_extract_text(crop_filename)
 
@@ -146,6 +149,7 @@ class SorterTools:
 
     def run_merge(self):
         pdf_dict = self.get_pdf_dict()
+        print('-Starting merge')
         for num, key in enumerate(pdf_dict.keys()):
             pdf_images = pdf_dict[key]['images']
             img_list = []
@@ -154,8 +158,9 @@ class SorterTools:
                 img_data = img_data.convert('RGB')
                 img_list.append(img_data)
             im1 = img_list.pop(0)
-            im1.save(f"{self.output_dir}/pdfs/pdf-{str(num)}.pdf", save_all=True, append_images=img_list)
-            print(f"-file pdf-{str(num)}.pdf saved")
+            im1.save(f"{self.output_dir}/pdfs/pdf-{str(key)}.pdf", save_all=True, append_images=img_list)
+            print(f"-file pdf-{str(key)}.pdf saved")
+        print('-Stopping merge')
 
     def save_pdf_dict(self):
         if os.path.isfile(os.path.join(self.output_dir, 'pdf_dict.json')):
@@ -240,7 +245,9 @@ class SorterTools:
                     output_dict[extracted_text] = {}
                     temp_set.append(image_filename)
                     output_dict[extracted_text]['images'] = temp_set
-                    # output_dict[extracted_text]['email'] = database.database_query(extracted_text)
+                    output_dict[extracted_text]['email'] = self.query_database(extracted_text)
+                    output_dict[extracted_text]['pdf'] = f"{self.output_dir}/pdfs/pdf-{extracted_text}.pdf"
+
             return output_dict
         else:
             return {'null': 'null'}
@@ -336,3 +343,13 @@ class SorterTools:
         result_number = ''.join(list_of_numbers)
         return result_number
 
+    def connect_to_database(self):
+        self.database = MsSqlQuery(config_file=self.config_file)
+        self.db_connected = self.database.build_connection(trusted=False)
+
+    def query_database(self, db_query_txt):
+        if self.db_connected:
+            text = self.database.database_query(db_query_txt)
+            return text
+        else:
+            return None
